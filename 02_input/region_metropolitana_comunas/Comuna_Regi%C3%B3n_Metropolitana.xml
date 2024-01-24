@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?><MD_Metadata xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xalan="http://xml.apache.org/xalan" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns="http://www.isotc211.org/2005/gmd">
+    <fileIdentifier>
+        <gco:CharacterString>DPA-3</gco:CharacterString>
+    </fileIdentifier>
+    <language>
+        <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="spa" codeSpace="ISO639-2">spa</LanguageCode>
+    </language>
+    <characterSet>
+        <MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8" codeSpace="ISOTC211/19115">utf8</MD_CharacterSetCode>
+    </characterSet>
+    <hierarchyLevel>
+        <MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="feature" codeSpace="ISOTC211/19115">feature</MD_ScopeCode>
+    </hierarchyLevel>
+    <contact>
+        <CI_ResponsibleParty>
+            <individualName>
+                <gco:CharacterString>Departamento de Geografía</gco:CharacterString>
+            </individualName>
+            <organisationName>
+                <gco:CharacterString>Instituto Nacional de Estadísticas</gco:CharacterString>
+            </organisationName>
+            <positionName>
+                <gco:CharacterString>Ministerio de Economía</gco:CharacterString>
+            </positionName>
+            <contactInfo>
+                <CI_Contact>
+                    <phone>
+                        <CI_Telephone>
+                            <voice>
+                                <gco:CharacterString>(56-2) 2892 4000</gco:CharacterString>
+                            </voice>
+                            <facsimile>
+                                <gco:CharacterString>(56-2) 2671 2169</gco:CharacterString>
+                            </facsimile>
+                        </CI_Telephone>
+                    </phone>
+                    <address>
+                        <CI_Address>
+                            <deliveryPoint>
+                                <gco:CharacterString>Avenida Presidente Bulnes 418</gco:CharacterString>
+                            </deliveryPoint>
+                            <city>
+                                <gco:CharacterString>Santiago</gco:CharacterString>
+                            </city>
+                            <administrativeArea>
+                                <gco:CharacterString>Región Metropolitana</gco:CharacterString>
+                            </administrativeArea>
+                            <postalCode>
+                                <gco:CharacterString>8330532</gco:CharacterString>
+                            </postalCode>
+                            <country>
+                                <Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeListValue="CL" codeSpace="ISO3166-1">CL</Country>
+                            </country>
+                            <electronicMailAddress>
+                                <gco:CharacterString>raul.ponce@ine.cl</gco:CharacterString>
+                            </electronicMailAddress>
+                        </CI_Address>
+                    </address>
+                    <onlineResource>
+                        <CI_OnlineResource>
+                            <linkage>
+                                <URL>http://ine-chile.maps.arcgis.com/apps/webappviewer/index.html?id=357ca028567246958c8778148cf6147d</URL>
+                            </linkage>
+                            <protocol gco:nilReason="missing"/>
+                            <name>
+                                <gco:CharacterString>Resultados Censo 2017</gco:CharacterString>
+                            </name>
+                            <description>
+                                <gco:CharacterString>Diseminación datos geográficos censales</gco:CharacterString>
+                            </description>
+                        </CI_OnlineResource>
+                    </onlineResource>
+                </CI_Contact>
+            </contactInfo>
+            <role>
+                <CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="owner" codeSpace="ISOTC211/19115">owner</CI_RoleCode>
+            </role>
+        </CI_ResponsibleParty>
+    </contact>
+    <dateStamp>
+        <gco:Date>2018-06-28</gco:Date>
+    </dateStamp>
+    <metadataStandardName>
+        <gco:CharacterString>NAP - Metadata</gco:CharacterString>
+    </metadataStandardName>
+    <metadataStandardVersion>
+        <gco:CharacterString>1.2</gco:CharacterString>
+    </metadataStandardVersion>
+    <locale>
+        <PT_Locale>
+            <languageCode>
+                <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="spa" codeSpace="ISO639-2">spa</LanguageCode>
+            </languageCode>
+            <country>
+                <Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeListValue="CL" codeSpace="ISO3166-1">CL</Country>
+            </country>
+            <characterEncoding>
+                <MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8" codeSpace="ISOTC211/19115">utf8</MD_CharacterSetCode>
+            </characterEncoding>
+        </PT_Locale>
+    </locale>
+    <spatialRepresentationInfo>
+        <MD_VectorSpatialRepresentation>
+            <topologyLevel>
+                <MD_TopologyLevelCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_TopologyLevelCode" codeListValue="geometryOnly" codeSpace="ISOTC211/19115">geometryOnly</MD_TopologyLevelCode>
+            </topologyLevel>
+            <geometricObjects>
+                <MD_GeometricObjects>
+                    <geometricObjectType>
+                        <MD_GeometricObjectTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_GeometricObjectTypeCode" codeListValue="composite" codeSpace="ISOTC211/19115">composite</MD_GeometricObjectTypeCode>
+                    </geometricObjectType>
+                </MD_GeometricObjects>
+            </geometricObjects>
+        </MD_VectorSpatialRepresentation>
+    </spatialRepresentationInfo>
+    <referenceSystemInfo>
+        <MD_ReferenceSystem>
+            <referenceSystemIdentifier>
+                <RS_Identifier>
+                    <code>
+                        <gco:CharacterString>4674</gco:CharacterString>
+                    </code>
+                    <codeSpace>
+                        <gco:CharacterString>EPSG</gco:CharacterString>
+                    </codeSpace>
+                    <version>
+                        <gco:CharacterString>7.8.3(9.2.0)</gco:CharacterString>
+                    </version>
+                </RS_Identifier>
+            </referenceSystemIdentifier>
+        </MD_ReferenceSystem>
+    </referenceSystemInfo>
+    <identificationInfo>
+        <MD_DataIdentification>
+            <citation>
+                <CI_Citation>
+                    <title>
+                        <gco:CharacterString>COMUNA_C17_Select</gco:CharacterString>
+                    </title>
+                    <alternateTitle>
+                        <gco:CharacterString>División Política Administrativa</gco:CharacterString>
+                    </alternateTitle>
+                    <date>
+                        <CI_Date>
+                            <date>
+                                <gco:Date>2018-06-15</gco:Date>
+                            </date>
+                            <dateType>
+                                <CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" codeSpace="ISOTC211/19115">creation</CI_DateTypeCode>
+                            </dateType>
+                        </CI_Date>
+                    </date>
+                    <date>
+                        <CI_Date>
+                            <date>
+                                <gco:Date>2018-06-29</gco:Date>
+                            </date>
+                            <dateType>
+                                <CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" codeSpace="ISOTC211/19115">publication</CI_DateTypeCode>
+                            </dateType>
+                        </CI_Date>
+                    </date>
+                    <citedResponsibleParty>
+                        <CI_ResponsibleParty>
+                            <individualName>
+                                <gco:CharacterString>Departamento de Geografía</gco:CharacterString>
+                            </individualName>
+                            <organisationName>
+                                <gco:CharacterString>Instituto Nacional de Estadísticas</gco:CharacterString>
+                            </organisationName>
+                            <positionName>
+                                <gco:CharacterString>Ministerio de Economía</gco:CharacterString>
+                            </positionName>
+                            <contactInfo>
+                                <CI_Contact>
+                                    <phone>
+                                        <CI_Telephone>
+                                            <voice>
+                                                <gco:CharacterString>(56-2) 2892 4000</gco:CharacterString>
+                                            </voice>
+                                            <facsimile>
+                                                <gco:CharacterString>(56-2) 2671 2169</gco:CharacterString>
+                                            </facsimile>
+                                        </CI_Telephone>
+                                    </phone>
+                                    <address>
+                                        <CI_Address>
+                                            <deliveryPoint>
+                                                <gco:CharacterString>Avenida Presidente Bulnes 418</gco:CharacterString>
+                                            </deliveryPoint>
+                                            <city>
+                                                <gco:CharacterString>Santiago</gco:CharacterString>
+                                            </city>
+                                            <administrativeArea>
+                                                <gco:CharacterString>Región Metropolitana</gco:CharacterString>
+                                            </administrativeArea>
+                                            <postalCode>
+                                                <gco:CharacterString>8330532</gco:CharacterString>
+                                            </postalCode>
+                                            <country>
+                                                <Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeListValue="CL" codeSpace="ISO3166-1">CL</Country>
+                                            </country>
+                                            <electronicMailAddress>
+                                                <gco:CharacterString>raul.ponce@ine.cl</gco:CharacterString>
+                                            </electronicMailAddress>
+                                        </CI_Address>
+                                    </address>
+                                    <onlineResource>
+                                        <CI_OnlineResource>
+                                            <linkage>
+                                                <URL>http://ine-chile.maps.arcgis.com/apps/webappviewer/index.html?id=357ca028567246958c8778148cf6147d</URL>
+                                            </linkage>
+                                            <protocol gco:nilReason="missing"/>
+                                            <name>
+                                                <gco:CharacterString>Resultados Censo 2017</gco:CharacterString>
+                                            </name>
+                                            <description>
+                                                <gco:CharacterString>Diseminación datos geográficos censales</gco:CharacterString>
+                                            </description>
+                                        </CI_OnlineResource>
+                                    </onlineResource>
+                                </CI_Contact>
+                            </contactInfo>
+                            <role>
+                                <CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="owner" codeSpace="ISOTC211/19115">owner</CI_RoleCode>
+                            </role>
+                        </CI_ResponsibleParty>
+                    </citedResponsibleParty>
+                    <presentationForm>
+                        <CI_PresentationFormCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode" codeListValue="mapDigital" codeSpace="ISOTC211/19115">mapDigital</CI_PresentationFormCode>
+                    </presentationForm>
+                    <collectiveTitle>
+                        <gco:CharacterString>Comuna Censo 2017</gco:CharacterString>
+                    </collectiveTitle>
+                </CI_Citation>
+            </citation>
+            <abstract>
+                <gco:CharacterString>Capa de polígono que representa la División Administrativa más pequeña y básica del país. La administración local de cada comuna reside en una Municipalidad, cuyo representante es el Alcalde. En Chile, el Alcalde, es elegido por la ciudadanía a través de un procedimiento electoral cada cuatro años.</gco:CharacterString>
+            </abstract>
+            <purpose>
+                <gco:CharacterString>Corresponde a una capa de polígono que contiene la División Política Administrativa, definida por SUBDERE y la división censal definida por INE.</gco:CharacterString>
+            </purpose>
+            <credit>
+                <gco:CharacterString>Departamento de Geografía Instituto Nacional de Estadísticas - Chile Subsecretaría de Desarrollo Regional y Administrativo</gco:CharacterString>
+            </credit>
+            <status gco:nilReason="missing"/>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>SUBDERE</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>DPA</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Limites</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>división político administrativa</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>censo</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>INE</gco:CharacterString>
+                    </keyword>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>SUBDERE</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>DPA</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Limites</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>división político administrativa</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>censo</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>INE</gco:CharacterString>
+                    </keyword>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>SUBDERE</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>DPA</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Limites</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>división político administrativa</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>censo</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>INE</gco:CharacterString>
+                    </keyword>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>SUBDERE</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>DPA</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Limites</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>división político administrativa</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>censo</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>INE</gco:CharacterString>
+                    </keyword>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>SUBDERE</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>DPA</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Limites</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>división político administrativa</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>censo</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>INE</gco:CharacterString>
+                    </keyword>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>SUBDERE</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>DPA</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Limites</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>división político administrativa</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>censo</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>INE</gco:CharacterString>
+                    </keyword>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>Downloadable Data</gco:CharacterString>
+                    </keyword>
+                    <thesaurusName uuidref="723f6998-058e-11dc-8314-0800200c9a66"/>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <resourceConstraints>
+                <MD_Constraints>
+                    <useLimitation>
+                        <gco:CharacterString>Capa cartográfica basada en el nivel regional de la división política administrativa del territorio chileno adaptada para fines censales institucionales.</gco:CharacterString>
+                    </useLimitation>
+                </MD_Constraints>
+            </resourceConstraints>
+            <resourceConstraints>
+                <MD_Constraints>
+                    <useLimitation>
+                        <gco:CharacterString>La edición y circulación de mapas, cartas geográficas u otros impresos y documentos que se refieran o relacionen con los límites y fronteras de Chile, no comprometen, en modo alguno, al Estado de Chile, de acuerdo con el Art. 2°, letra g) del DFL N° 83 de 1979 del Ministerio de Relaciones Exteriores</gco:CharacterString>
+                    </useLimitation>
+                </MD_Constraints>
+            </resourceConstraints>
+            <spatialRepresentationType>
+                <MD_SpatialRepresentationTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_SpatialRepresentationTypeCode" codeListValue="vector" codeSpace="ISOTC211/19115">vector</MD_SpatialRepresentationTypeCode>
+            </spatialRepresentationType>
+            <spatialResolution>
+                <MD_Resolution>
+                    <equivalentScale>
+                        <MD_RepresentativeFraction>
+                            <denominator>
+                                <gco:Integer>50000</gco:Integer>
+                            </denominator>
+                        </MD_RepresentativeFraction>
+                    </equivalentScale>
+                </MD_Resolution>
+            </spatialResolution>
+            <spatialResolution>
+                <MD_Resolution>
+                    <distance>
+                        <gco:Distance uom="m"/>
+                    </distance>
+                </MD_Resolution>
+            </spatialResolution>
+            <language>
+                <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="spa" codeSpace="ISO639-2">spa</LanguageCode>
+            </language>
+            <characterSet>
+                <MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8" codeSpace="ISOTC211/19115">utf8</MD_CharacterSetCode>
+            </characterSet>
+            <topicCategory>
+                <MD_TopicCategoryCode>boundaries</MD_TopicCategoryCode>
+            </topicCategory>
+            <topicCategory>
+                <MD_TopicCategoryCode>location</MD_TopicCategoryCode>
+            </topicCategory>
+            <topicCategory>
+                <MD_TopicCategoryCode>planningCadastre</MD_TopicCategoryCode>
+            </topicCategory>
+            <environmentDescription>
+                <gco:CharacterString>Esri ArcGIS 10.5.1.7333</gco:CharacterString>
+            </environmentDescription>
+            <extent>
+                <EX_Extent>
+                    <geographicElement>
+                        <EX_GeographicBoundingBox>
+                            <extentTypeCode>
+                                <gco:Boolean>true</gco:Boolean>
+                            </extentTypeCode>
+                            <westBoundLongitude>
+                                <gco:Decimal>-109.454879</gco:Decimal>
+                            </westBoundLongitude>
+                            <eastBoundLongitude>
+                                <gco:Decimal>-66.415584</gco:Decimal>
+                            </eastBoundLongitude>
+                            <southBoundLatitude>
+                                <gco:Decimal>-56.537766</gco:Decimal>
+                            </southBoundLatitude>
+                            <northBoundLatitude>
+                                <gco:Decimal>-17.497776</gco:Decimal>
+                            </northBoundLatitude>
+                        </EX_GeographicBoundingBox>
+                    </geographicElement>
+                </EX_Extent>
+            </extent>
+        </MD_DataIdentification>
+    </identificationInfo>
+    <distributionInfo>
+        <MD_Distribution>
+            <distributionFormat>
+                <MD_Format>
+                    <name>
+                        <gco:CharacterString>Shapefile</gco:CharacterString>
+                    </name>
+                    <version>
+                        <gco:CharacterString>1</gco:CharacterString>
+                    </version>
+                </MD_Format>
+            </distributionFormat>
+            <transferOptions>
+                <MD_DigitalTransferOptions/>
+            </transferOptions>
+        </MD_Distribution>
+    </distributionInfo>
+    <dataQualityInfo>
+        <DQ_DataQuality>
+            <scope gco:nilReason="missing"/>
+            <lineage>
+                <LI_Lineage>
+                    <statement>
+                        <gco:CharacterString>Feature elaborada -en formato coverage con geometría de polígonos- por el Instituto Nacional de Estadísticas el año 2010, para el levantamiento precensal 2011. En este proceso, se utilizaron diversas fuentes de información, tanto en formato análogo como vectorial y ráster, estos últimos obtenidos a través de compras de paquetes cartográficos a distintas instituciones y/o de plataformas tecnológicas e imágenes satelitales de libre disposición en la web. Sin embrago, estas últimas se consideran referenciales, ya que los insumos principales para esta confección de limites nacionales fueron los límites del Censo 2002 que estaban dibujados en planos censales o en cartas topográficas (IGM) para las regiones extremas (formato análogo), y en archivos digitales (formato e.00) para las regiones centro-sur del país. El trazado de los polígonos se generó traspasando desde el formato análogo o el digital existente, hacia la nueva coverage, reconociendo e identificando cada elemento que hace mención la redacción de límites, la cual también fue actualizada el 2010 por un equipo INE (actual Unidad de Análisis - Departamento de Geografía). La coverage original fue elaborada sobre el Datum WGS-84, en coordenadas UTM, Huso 19 desde la región XV a la VII, y Huso 18 desde la VIII región al sur. Estos polígonos se crearon con propósitos censales. Posterior al levantamiento precensal del 2011, se realizó el cambio de plataforma institucional, lo que implica también, el cambio de formato desde el coverage al formato GDB (desde ArcInfo Workstation a Geodatabase en ArcGis, respectivamente) En el Precenso 2016, los límites utilizados para los planos del levantamiento, fueron visados y/o actualizados por el equipo del Departamento de Geografía de la Institución en conjunto con SUBDERE. Luego, estos límites fueron fragmentados con el propósito de ser utilizados en la generación de archivos TPK cargados a los DMC (Dispositivos Móviles de Captura) para el levantamiento de viviendas rurales. Finalmente, se consolidó esta información espacial a nivel nacional, con las validaciones geométricas y topológicas de la plataforma construidas en las GDB.</gco:CharacterString>
+                    </statement>
+                    <source>
+                        <LI_Source>
+                            <description>
+                                <gco:CharacterString>Carta digital IGM</gco:CharacterString>
+                            </description>
+                            <scaleDenominator>
+                                <MD_RepresentativeFraction>
+                                    <denominator>
+                                        <gco:Integer>50000</gco:Integer>
+                                    </denominator>
+                                </MD_RepresentativeFraction>
+                            </scaleDenominator>
+                        </LI_Source>
+                    </source>
+                </LI_Lineage>
+            </lineage>
+        </DQ_DataQuality>
+    </dataQualityInfo>
+    <metadataConstraints>
+        <MD_Constraints>
+            <useLimitation>
+                <gco:CharacterString>Uso para fines censales</gco:CharacterString>
+            </useLimitation>
+        </MD_Constraints>
+    </metadataConstraints>
+    <metadataConstraints>
+        <MD_LegalConstraints>
+            <accessConstraints>
+                <MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="restricted" codeSpace="ISOTC211/19115">restricted</MD_RestrictionCode>
+            </accessConstraints>
+            <useConstraints>
+                <MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions" codeSpace="ISOTC211/19115">otherRestrictions</MD_RestrictionCode>
+            </useConstraints>
+        </MD_LegalConstraints>
+    </metadataConstraints>
+    <metadataMaintenance>
+        <MD_MaintenanceInformation>
+            <maintenanceAndUpdateFrequency>
+                <MD_MaintenanceFrequencyCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_MaintenanceFrequencyCode" codeListValue="asNeeded" codeSpace="ISOTC211/19115">asNeeded</MD_MaintenanceFrequencyCode>
+            </maintenanceAndUpdateFrequency>
+        </MD_MaintenanceInformation>
+    </metadataMaintenance>
+</MD_Metadata>
