@@ -94,7 +94,9 @@ soil_loss_app/
 
 The **Revised Universal Soil Loss Equation (RUSLE)** is an empirical model used to estimate the average annual rate of soil erosion caused by rainfall and associated surface runoff. The equation calculates soil loss by considering various environmental and land management factors. The RUSLE equation is expressed as:
 
-\[ A = R \times K \times LS \times C \times P \]
+```math
+A = R \times K \times LS \times C \times P
+```
 
 Where:
 
