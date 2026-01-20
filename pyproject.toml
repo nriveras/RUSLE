@@ -1,0 +1,55 @@
+[project]
+name = "rusle"
+version = "0.1.0"
+description = "RUSLE (Revised Universal Soil Loss Equation) implementation using Google Earth Engine"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Nico Riveras" }
+]
+keywords = ["erosion", "rusle", "gee", "earth-engine", "soil-loss"]
+
+dependencies = [
+    "earthengine-api>=1.1.0",
+    "geemap>=0.34.0",
+    "geopandas>=1.0.0",
+    "matplotlib>=3.8.0",
+    "numpy>=1.26.0",
+    "pandas>=2.2.0",
+    "seaborn>=0.13.0",
+    "rasterio>=1.3.0",
+    "branca>=0.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel>=6.29.0",
+    "jupyter>=1.0.0",
+    "ipywidgets>=8.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["00_scripts"]
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel>=6.29.0",
+    "jupyter>=1.0.0",
+    "ipywidgets>=8.1.0",
+]
+
+[tool.uv.sources]
+# Add any custom sources here if needed
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]

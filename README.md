@@ -1,3 +1,53 @@
+# RUSLE - Revised Universal Soil Loss Equation
+
+Implementation of the RUSLE model using Google Earth Engine and Python.
+
+## Example Output
+
+![RUSLE Soil Loss - Metropolitana Region](03_output/RUSLE_soil_loss_Metropolitana_2022-11-14_to_2023-11-14_preview.jpg)
+
+*Soil loss estimation for the Metropolitana Region, Chile (2022-11-14 to 2023-11-14)*
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- [uv](https://docs.astral.sh/uv/) - Fast Python package installer
+- Python 3.10+ (managed automatically by uv)
+- Google Earth Engine account
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repo-url>
+cd RUSLE
+
+# Install dependencies with uv (creates .venv automatically)
+uv sync
+
+# Activate the virtual environment
+source .venv/bin/activate  # Linux/macOS
+# or
+.venv\Scripts\activate     # Windows
+```
+
+### Running the Notebook
+
+1. Open VS Code and select the `.venv` Python interpreter
+2. Open `00_scripts/RUSLE.ipynb`
+3. Run the cells sequentially
+
+### Google Earth Engine Setup
+
+1. Create a GEE project at [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the Earth Engine API
+3. Update `GEE_PROJECT` in the notebook with your project ID
+
+---
+
 # Specifications
 
 + The tool has to be hosted/deployed as a web app:
@@ -39,9 +89,8 @@ graph TD
 
     DisplayResults --> End[End]
 
-
-
 ```
+
 # Project structure
 
 ```graphql
