@@ -175,12 +175,20 @@ def load_area_from_gaul(region_name: str, admin_level: int = 1) -> ee.FeatureCol
 
     Args:
         region_name: Name of the region to search
-        admin_level: Administrative level (1 or 2)
+        admin_level: Administrative level (0=country, 1=region/state, 2=province/county)
 
     Returns:
         Feature collection for the region
+    
+    Examples:
+        - Level 0: "Spain", "France", "Germany", "Italy"
+        - Level 1: "Cataluña", "Île-de-France", "Bayern", "Toscana"
+        - Level 2: "Barcelona", "Paris", "Milano"
     """
-    if admin_level == 1:
+    if admin_level == 0:
+        gaul = ee.FeatureCollection("FAO/GAUL/2015/level0")
+        return gaul.filter(ee.Filter.stringContains('ADM0_NAME', region_name))
+    elif admin_level == 1:
         gaul = ee.FeatureCollection("FAO/GAUL/2015/level1")
         return gaul.filter(ee.Filter.stringContains('ADM1_NAME', region_name))
     else:

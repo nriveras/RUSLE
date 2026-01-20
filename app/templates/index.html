@@ -71,10 +71,18 @@
                         <div id="tab-region" class="tab-content">
                             <div class="form-group">
                                 <label for="admin-region">Administrative Region Name</label>
-                                <input type="text" id="admin-region" placeholder="e.g., Metropolitana">
+                                <input type="text" id="admin-region" placeholder="e.g., Metropolitana, Spain, Bayern">
                                 <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
                                     Uses FAO GAUL boundaries
                                 </small>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin-level">Administrative Level</label>
+                                <select id="admin-level">
+                                    <option value="0">Level 0 - Country (Spain, France, Germany...)</option>
+                                    <option value="1" selected>Level 1 - Region/State (Cataluña, Bayern...)</option>
+                                    <option value="2">Level 2 - Province/County (Barcelona, Milano...)</option>
+                                </select>
                             </div>
                         </div>
                     </div>

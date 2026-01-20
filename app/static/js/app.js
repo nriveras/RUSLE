@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function initializeMap() {
     state.map = L.map('map', {
-        center: [-33.45, -70.65], // Santiago, Chile default
-        zoom: 9
+        center: [40, 0], // Default to Europe/Atlantic view
+        zoom: 3
     });
     
     // Add base layers
@@ -293,6 +293,7 @@ async function processRUSLE() {
             requestBody.session_id = state.sessionId;
         } else {
             requestBody.admin_region = adminRegion;
+            requestBody.admin_level = parseInt(document.getElementById('admin-level').value);
         }
         
         const response = await fetch(API.process, {
@@ -314,7 +315,15 @@ async function processRUSLE() {
         // Display results
         await displayResults(data);
         
-        showAlert('success', `RUSLE calculation completed in ${data.computation_time.toFixed(2)}s`);
+        // Build success message with area and scale info
+        let successMsg = `RUSLE calculation completed in ${data.computation_time.toFixed(2)}s`;
+        if (data.area_km2) {
+            successMsg += ` | Area: ${data.area_km2.toLocaleString()} km²`;
+        }
+        if (data.scale_adjusted) {
+            successMsg += ` | Scale adjusted to ${data.export_scale_used}m`;
+        }
+        showAlert('success', successMsg);
         
     } catch (error) {
         showAlert('error', error.message);

@@ -32,6 +32,23 @@ class DEMSource(str, Enum):
     MERIT = "MERIT"
 
 
+# Minimum export scale by admin level to prevent excessive computation
+MIN_EXPORT_SCALE_BY_LEVEL = {
+    0: 250,   # Country level - minimum 250m resolution
+    1: 90,    # Region/state level - minimum 90m resolution
+    2: 30,    # Province/county level - minimum 30m resolution
+}
+
+# Maximum area (km²) for each export scale tier
+AREA_SCALE_THRESHOLDS = [
+    (500_000, 500),    # > 500,000 km² -> 500m minimum (large countries)
+    (100_000, 250),    # > 100,000 km² -> 250m minimum
+    (10_000, 90),      # > 10,000 km² -> 90m minimum
+    (1_000, 30),       # > 1,000 km² -> 30m minimum
+    (0, 10),           # smaller areas -> 10m allowed
+]
+
+
 class ProcessRequest(BaseModel):
     """Request model for RUSLE processing."""
     session_id: Optional[str] = Field(
@@ -41,6 +58,12 @@ class ProcessRequest(BaseModel):
     admin_region: Optional[str] = Field(
         None,
         description="Administrative region name (uses FAO GAUL). Alternative to session_id."
+    )
+    admin_level: int = Field(
+        1,
+        ge=0,
+        le=2,
+        description="Administrative level: 0=country, 1=region/state, 2=province/county"
     )
     date_from: str = Field(
         ...,
@@ -96,6 +119,9 @@ class ProcessResponse(BaseModel):
     factors: Optional[Dict[str, FactorInfo]] = None
     soil_loss_tile_url: Optional[str] = None
     statistics: Optional[Dict[str, Any]] = None
+    area_km2: Optional[float] = None
+    export_scale_used: Optional[int] = None
+    scale_adjusted: Optional[bool] = None
 
 
 class JobStatus(BaseModel):
@@ -132,7 +158,22 @@ async def process_rusle(request: ProcessRequest):
         if request.session_id:
             aoi = _get_aoi_from_session(request.session_id)
         else:
-            aoi = _get_aoi_from_admin(request.admin_region)
+            aoi = _get_aoi_from_admin(request.admin_region, request.admin_level)
+        
+        # Calculate area and determine minimum export scale
+        area_km2 = aoi.area().divide(1e6).getInfo()  # Convert m² to km²
+        min_scale = _get_minimum_scale(area_km2, request.admin_level)
+        
+        # Adjust export scale if needed
+        adjusted_scale = max(request.export_scale, min_scale)
+        scale_was_adjusted = adjusted_scale != request.export_scale
+        
+        logger.info(
+            f"Area: {area_km2:.0f} km², "
+            f"Requested scale: {request.export_scale}m, "
+            f"Minimum scale: {min_scale}m, "
+            f"Using: {adjusted_scale}m"
+        )
         
         # Create calculator and inputs
         calculator = RUSLECalculator()
@@ -141,7 +182,7 @@ async def process_rusle(request: ProcessRequest):
             date_from=request.date_from,
             date_to=request.date_to,
             dem_source=request.dem_source.value,
-            export_scale=request.export_scale
+            export_scale=adjusted_scale
         )
         
         # Run calculation
@@ -224,16 +265,26 @@ async def process_rusle(request: ProcessRequest):
         _results_cache[job_id] = {
             'result': result,
             'aoi': aoi,
-            'request': request
+            'request': request,
+            'area_km2': area_km2,
+            'export_scale_used': adjusted_scale
         }
+        
+        # Build message with scale adjustment info
+        message = 'RUSLE calculation completed successfully'
+        if scale_was_adjusted:
+            message += f' (export scale auto-adjusted from {request.export_scale}m to {adjusted_scale}m for large area)'
         
         return ProcessResponse(
             job_id=job_id,
             status='completed',
-            message='RUSLE calculation completed successfully',
+            message=message,
             computation_time=result.computation_time,
             factors=factors,
-            soil_loss_tile_url=soil_loss_tile_url
+            soil_loss_tile_url=soil_loss_tile_url,
+            area_km2=round(area_km2, 2),
+            export_scale_used=adjusted_scale,
+            scale_adjusted=scale_was_adjusted
         )
         
     except ValueError as e:
@@ -335,15 +386,57 @@ def _get_aoi_from_session(session_id: str):
     raise ValueError("No geometry data found for session")
 
 
-def _get_aoi_from_admin(admin_region: str):
-    """Load AOI from FAO GAUL administrative boundaries."""
+def _get_aoi_from_admin(admin_region: str, admin_level: int = 1):
+    """Load AOI from FAO GAUL administrative boundaries.
+    
+    Args:
+        admin_region: Region name to search for
+        admin_level: 0=country, 1=region/state, 2=province/county
+    
+    Examples:
+        - Level 0: "Spain", "France", "Germany", "Italy", "Portugal"
+        - Level 1: "Cataluña", "Île-de-France", "Bayern", "Toscana"
+        - Level 2: "Barcelona", "Paris", "Milano"
+    """
     import ee
     
-    fc = load_area_from_gaul(admin_region, admin_level=1)
+    fc = load_area_from_gaul(admin_region, admin_level=admin_level)
     
     # Check if we got results
     count = fc.size().getInfo()
     if count == 0:
-        raise ValueError(f"Administrative region not found: {admin_region}")
+        level_names = {0: 'country', 1: 'region/state', 2: 'province/county'}
+        raise ValueError(
+            f"Administrative region not found: '{admin_region}' at level {admin_level} ({level_names.get(admin_level, 'unknown')}). "
+            f"Try a different admin_level or check the spelling."
+        )
     
     return fc.geometry()
+
+
+def _get_minimum_scale(area_km2: float, admin_level: int) -> int:
+    """
+    Determine minimum export scale based on area size and admin level.
+    
+    This prevents excessive computation for large areas by enforcing
+    a minimum resolution based on the area size.
+    
+    Args:
+        area_km2: Area in square kilometers
+        admin_level: Administrative level (0=country, 1=region, 2=province)
+    
+    Returns:
+        Minimum export scale in meters
+    """
+    # First check admin level minimum
+    level_min = MIN_EXPORT_SCALE_BY_LEVEL.get(admin_level, 90)
+    
+    # Then check area-based thresholds
+    area_min = 10  # default minimum
+    for threshold_km2, scale in AREA_SCALE_THRESHOLDS:
+        if area_km2 > threshold_km2:
+            area_min = scale
+            break
+    
+    # Return the more restrictive (larger) minimum
+    return max(level_min, area_min)
