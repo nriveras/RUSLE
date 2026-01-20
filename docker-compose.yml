@@ -1,0 +1,32 @@
+services:
+  rusle-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rusle-web
+    ports:
+      - "8000:8000"
+    environment:
+      - RUSLE_GEE_PROJECT=${RUSLE_GEE_PROJECT:-ee-nriveras}
+      - RUSLE_DEBUG=${RUSLE_DEBUG:-false}
+      - RUSLE_MAX_UPLOAD_SIZE_MB=${RUSLE_MAX_UPLOAD_SIZE_MB:-50}
+      - RUSLE_MAX_AOI_AREA_KM2=${RUSLE_MAX_AOI_AREA_KM2:-50000}
+      - RUSLE_DEFAULT_EXPORT_SCALE=${RUSLE_DEFAULT_EXPORT_SCALE:-90}
+    volumes:
+      # Mount GEE credentials (required for authentication)
+      - ~/.config/earthengine:/home/appuser/.config/earthengine:ro
+      # Mount data directories for persistence
+      - ./data/uploads:/app/data/uploads
+      - ./data/output:/app/data/output
+      - ./03_output:/app/03_output
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# Optional: Add a volume for persistent GEE cache
+volumes:
+  gee-cache:

@@ -71,6 +71,25 @@ The web application allows you to:
    # Edit .env with your project ID
    ```
 
+### Option 3: Run with Docker
+
+```bash
+# Build the Docker image
+docker build -t rusle-app .
+
+# Run with docker-compose (recommended)
+docker-compose up -d
+
+# Or run directly with Docker
+docker run -d \
+  -p 8000:8000 \
+  -v ~/.config/earthengine:/home/appuser/.config/earthengine:ro \
+  -e RUSLE_GEE_PROJECT=your-project-id \
+  rusle-app
+```
+
+**Note:** You must authenticate with GEE locally first (`earthengine authenticate`) before running the container, as it mounts your credentials.
+
 ---
 
 ## Project Structure
