@@ -51,6 +51,7 @@ The web application allows you to:
 - Select an administrative region by name (uses FAO GAUL boundaries)
 - Specify date range for analysis
 - Visualize soil loss and all RUSLE factors on an interactive map
+- Toggle individual layers (R, K, L, S, C, P factors)
 - Export results to Google Drive
 
 ### Option 2: Run the Jupyter Notebook
@@ -64,228 +65,192 @@ The web application allows you to:
 1. Create a GEE project at [Google Cloud Console](https://console.cloud.google.com/)
 2. Enable the Earth Engine API
 3. Register for Earth Engine at [https://earthengine.google.com/signup/](https://earthengine.google.com/signup/)
-4. Update `GEE_PROJECT` in the notebook or `.env` file with your project ID
+4. Update `GEE_PROJECT` in the notebook or create a `.env` file:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your project ID
+   ```
 
 ---
 
-## Web Application Architecture
+## Project Structure
 
 ```
-app/
-├── main.py              # FastAPI application entry point
-├── config.py            # Configuration settings
-├── routers/
-│   ├── upload.py        # File upload endpoints
-│   ├── process.py       # RUSLE calculation endpoints
-│   └── visualize.py     # Map visualization endpoints
-├── services/
-│   ├── gee_service.py       # Google Earth Engine integration
-│   ├── rusle_calculator.py  # RUSLE factor calculations
-│   └── shapefile_handler.py # Shapefile processing
-├── static/              # CSS and JavaScript
-└── templates/           # HTML templates
+RUSLE/
+├── app/                          # Web application (FastAPI)
+│   ├── __init__.py
+│   ├── main.py                   # FastAPI entry point
+│   ├── config.py                 # Configuration (pydantic-settings)
+│   ├── routers/
+│   │   ├── upload.py             # POST /api/upload
+│   │   ├── process.py            # POST /api/process
+│   │   └── visualize.py          # GET /api/visualize/{job_id}
+│   ├── services/
+│   │   ├── gee_service.py        # Google Earth Engine integration
+│   │   ├── rusle_calculator.py   # RUSLE factor calculations
+│   │   └── shapefile_handler.py  # Shapefile/GeoJSON processing
+│   ├── static/
+│   │   ├── css/style.css         # Application styles
+│   │   └── js/app.js             # Leaflet map & API interactions
+│   └── templates/
+│       └── index.html            # Main application page
+│
+├── 00_scripts/
+│   ├── RUSLE.ipynb               # Jupyter notebook implementation
+│   ├── rusle_utils.py            # RUSLE calculation utilities
+│   └── gee_auth.py               # GEE authentication helper
+│
+├── 01_references/                # Reference materials
+├── 02_input/                     # Input shapefiles
+├── 03_output/                    # Generated outputs
+├── data/
+│   ├── uploads/                  # Web app file uploads
+│   └── output/                   # Web app outputs
+│
+├── run.py                        # Web app entry point
+├── pyproject.toml                # Dependencies (uv)
+├── .env.example                  # Environment template
+└── README.md
 ```
+
+---
+
+## Web Application
 
 ### API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/upload` | POST | Upload shapefile or GeoJSON |
+| `/app` | GET | Main application page |
+| `/api/upload` | POST | Upload shapefile (ZIP) or GeoJSON |
+| `/api/upload/{session_id}/preview` | GET | Preview uploaded AOI as GeoJSON |
 | `/api/process` | POST | Run RUSLE calculation |
 | `/api/process/{job_id}/statistics` | GET | Get result statistics |
 | `/api/process/{job_id}/export` | POST | Export to Google Drive |
-| `/api/visualize/{job_id}` | GET | Get map configuration |
-| `/api/visualize/{job_id}/folium` | GET | Get Folium HTML map |
+| `/api/visualize/{job_id}` | GET | Get map layer configuration |
+| `/api/visualize/{job_id}/folium` | GET | Get embeddable Folium HTML map |
+| `/api/legend` | GET | Get soil loss legend classes |
+| `/health` | GET | Health check endpoint |
 
----
+### Process Request Example
 
-# Specifications
+```bash
+curl -X POST http://localhost:8000/api/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "admin_region": "Metropolitana",
+    "date_from": "2022-01-01",
+    "date_to": "2023-01-01",
+    "dem_source": "SRTM",
+    "export_scale": 90
+  }'
+```
 
-+ The tool has to be hosted/deployed as a web app:
-+ It will receive as input a shapefile with the area of interest (aoi) and the range of dates to perform the calculation.
-+ It will calculate the soils loss based in the (Revised Universal Soil Loss Equation) RUSLE equation.
-    + It will give the option to the user to load his own layers for the RUSLE as shapefiles.
-    + If some layer is not provided, it will use the remote sensing proxies retrieved from Google Earth Engine (using python API).
-+ The output will be visualized as a map showing the soil loss and alternativelly, it will display the intermediate layers for the calculation of it.
+### Architecture
 
 ```mermaid
 graph TD
     subgraph "User Interface"
-        Start[Start] --> UI["Web Application Frontend<br>(FastAPI + Jinja2)<br/>"]
-        UI --> InputAOI["User Uploads AOI Shapefile and set dates <br>(File Upload Form)<br/>"]
-        InputAOI --> CheckLayers{"Does User Provide<br/>RUSLE Layers?<br>"}
+        Start[Start] --> UI["Web Application<br>(FastAPI + Leaflet.js)"]
+        UI --> InputAOI["Upload Shapefile/GeoJSON<br>OR Select Admin Region"]
+        InputAOI --> SetDates["Set Date Range"]
     end
 
     subgraph "Backend (FastAPI)"
-        CheckLayers --> |Yes| UseUserLayers["Use User-provided<br>RUSLE Layers<br/>"]
-        CheckLayers --> |No| FetchLayers["Fetch Missing Layers from GEE<br>(Earth Engine Python API)<br/>"]
+        SetDates --> FetchLayers["Fetch Data from GEE"]
         FetchLayers --> GEE["Google Earth Engine"]
-        GEE --> FetchLayers
-        UseUserLayers & FetchLayers --> PrepareLayers["Prepare RUSLE Layers<br>(GeoPandas, Rasterio)<br/>"]
-        PrepareLayers --> CalculateRUSLE["Calculate Soil Loss using RUSLE<br>(Earth Engine)<br/>"]
+        GEE --> |Precipitation| R["R Factor<br>(CHIRPS)"]
+        GEE --> |Soil Data| K["K Factor<br>(OpenLandMap)"]
+        GEE --> |DEM| LS["L & S Factors<br>(SRTM/MERIT)"]
+        GEE --> |Landsat 8| C["C Factor<br>(NDVI)"]
+        GEE --> |Land Cover| P["P Factor<br>(MODIS 061)"]
+        R & K & LS & C & P --> Calculate["A = R × K × L × S × C × P"]
     end
 
-    CalculateRUSLE --> GenerateMaps["Generate Output Maps<br>(Folium, Leaflet.js)<br/>"]
-
-    GenerateMaps --> Visualization
+    Calculate --> TileURL["Generate Tile URLs"]
 
     subgraph "Visualization (Leaflet.js)"
-        Visualization --> DisplayResults["Display Soil Loss Map<br>(Interactive Map)<br/>"]
-        DisplayResults --> |Toggle Layers| DisplayIntermediate["Display Intermediate Layers"]
+        TileURL --> Map["Interactive Map"]
+        Map --> |Toggle| Layers["Layer Control"]
+        Layers --> SoilLoss["Soil Loss"]
+        Layers --> Factors["R, K, L, S, C, P Factors"]
     end
 
-    DisplayResults --> End[End]
-```
-    end
-
-    GenerateMaps --> Visualization
-
-    subgraph "Visualization (Leaflet.js / Folium)"
-        Visualization --> DisplayResults["Display Soil Loss Map<br>(Interactive Map)<br/>"]
-        DisplayResults --> |Optionally| DisplayIntermediate["Display Intermediate Layers"]
-    end
-
-    DisplayResults --> End[End]
-
+    Map --> Export["Export to Google Drive"]
+    Map --> End[End]
 ```
 
-# Project structure
+---
 
-```graphql
-soil_loss_app/
-│
-├── app/
-│   ├── main.py                    # Main entry point for running the web app
-│   ├── config.py                  # Configuration settings (API keys, GEE credentials, etc.)
-│   ├── routers/
-│   │   ├── __init__.py            # Initialization for routers
-│   │   ├── upload.py              # Router to handle file uploads
-│   │   ├── process.py             # Router to handle RUSLE processing logic
-│   │   └── visualize.py           # Router to handle visualization endpoints
-│   ├── services/
-│   │   ├── __init__.py            # Initialization for services
-│   │   ├── rusle_calculator.py    # RUSLE calculation logic
-│   │   ├── gee_fetcher.py         # Module to fetch data from Google Earth Engine
-│   │   └── shapefile_handler.py   # Module to handle shapefile processing with Geopandas
-│   ├── static/
-│   │   ├── css/                   # CSS stylesheets for the web app
-│   │   └── js/                    # JavaScript files if needed
-│   ├── templates/                 # HTML templates for the web app (if using Flask)
-│   │   ├── index.html             # Main page template
-│   │   └── results.html           # Results display template
-│   └── utils/
-│       ├── __init__.py            # Initialization for utility functions
-│       ├── data_validation.py     # Functions to validate user inputs and data
-│       └── map_visualizer.py      # Utility for creating maps with Folium or other libraries
-│
-├── tests/
-│   ├── test_rusle_calculator.py   # Unit tests for RUSLE calculation
-│   ├── test_gee_fetcher.py        # Unit tests for Google Earth Engine integration
-│   └── test_endpoints.py          # Tests for API endpoints
-│
-├── data/
-│   ├── sample_shapefiles/         # Sample shapefiles for testing
-│   └── output/                    # Directory for storing output results
-│
-├── docs/
-│   └── project_diagram.md         # Project diagram and documentation
-│
-├── requirements.txt               # Python dependencies
-├── README.md                      # Project overview and instructions
-└── .gitignore                     # Files and directories to be ignored by Git
+## Data Sources
 
-```
+| Factor | Data Source | Resolution | Dataset ID |
+|--------|-------------|------------|------------|
+| **R** (Rainfall Erosivity) | CHIRPS Daily | 5.5 km | `UCSB-CHG/CHIRPS/DAILY` |
+| **K** (Soil Erodibility) | OpenLandMap | 250 m | `OpenLandMap/SOL/*` |
+| **L, S** (Topography) | SRTM / MERIT | 30 m / 90 m | `USGS/SRTMGL1_003` |
+| **C** (Vegetation Cover) | Landsat 8 SR | 30 m | `LANDSAT/LC08/C02/T1_L2` |
+| **P** (Erosion Control) | MODIS Land Cover | 500 m | `MODIS/061/MCD12Q1` |
 
+---
 
-# Description
+## RUSLE Equation
 
-The **Revised Universal Soil Loss Equation (RUSLE)** is an empirical model used to estimate the average annual rate of soil erosion caused by rainfall and associated surface runoff. The equation calculates soil loss by considering various environmental and land management factors. The RUSLE equation is expressed as:
+The **Revised Universal Soil Loss Equation (RUSLE)** estimates average annual soil erosion:
 
-```math
-A = R \times K \times LS \times C \times P
-```
+$$A = R \times K \times L \times S \times C \times P$$
 
 Where:
 
-1. **A (Average Annual Soil Loss)**:
-   - Represents the computed average soil loss per unit area, typically expressed in tons per acre or metric tons per hectare per year.
-   - It is the end result of the equation, indicating the potential long-term average soil erosion.
+| Factor | Name | Description | Unit |
+|--------|------|-------------|------|
+| **A** | Soil Loss | Average annual soil loss | ton/ha/year |
+| **R** | Rainfall Erosivity | Effect of rainfall intensity | MJ·mm/(ha·h·yr) |
+| **K** | Soil Erodibility | Susceptibility of soil to erosion | t·ha·h/(ha·MJ·mm) |
+| **L** | Slope Length | Effect of slope length | dimensionless |
+| **S** | Slope Steepness | Effect of slope gradient | dimensionless |
+| **C** | Cover Management | Effect of vegetation cover | dimensionless |
+| **P** | Support Practices | Effect of conservation practices | dimensionless |
 
-2. **R (Rainfall-Runoff Erosivity Factor)**:
-   - Quantifies the effect of raindrop impact and the amount and rate of runoff likely to be associated with the rain.
-   - It is based on the intensity and duration of rainfall in a specific area.
-   - Areas with heavy, intense rains have higher R-values, indicating a greater potential for soil erosion.
+### Factor Calculations
 
-3. **K (Soil Erodibility Factor)**:
-   - Reflects the susceptibility of soil particles to detachment and transport by rainfall and runoff.
-   - It is influenced by soil properties such as texture, structure, organic matter content, and permeability.
-   - Soils with high silt content and low organic matter are typically more erodible.
-
-4. **LS (Slope Length and Steepness Factor)**:
-   - Accounts for the influence of topography on erosion rates.
-   - **L (Slope Length Factor)**: Represents the effect of slope length on erosion. Longer slopes contribute to more erosion due to the accumulation of runoff.
-   - **S (Slope Steepness Factor)**: Represents the effect of slope gradient. Steeper slopes increase the velocity of runoff, enhancing its erosive power.
-   - The combined LS factor increases with both slope length and steepness.
-
-5. **C (Cover-Management Factor)**:
-   - Indicates the effect of cropping and management practices on soil erosion rates.
-   - It compares the soil loss from land under specific crop and management conditions to that from continuously tilled fallow land.
-   - Vegetative cover, crop residues, and soil cover practices reduce the C factor, thus lowering soil erosion.
-
-6. **P (Support Practice Factor)**:
-   - Reflects the impact of practices that reduce the amount and rate of water runoff and thus soil erosion.
-   - Examples include contour farming, strip cropping, terracing, and the use of sediment control structures.
-   - Effective support practices decrease the P factor value, leading to reduced soil loss.
+- **K Factor** (Williams, 1995): Based on sand, silt, clay, and organic carbon content
+- **R Factor**: R = 0.0483 × P^1.610 where P is annual precipitation
+- **L Factor**: L = (λ / 22.13)^m where m varies with slope
+- **S Factor**: S = (0.43 + 0.3S + 0.043S²) / 6.613
+- **C Factor** (De Jong, 1994): C = 0.431 - 0.805 × NDVI
+- **P Factor**: Based on MODIS land cover classification (Chuenchum et al., 2019)
 
 ---
 
-**Summary of RUSLE Components**:
+## Soil Loss Classification
 
-- **A**: Estimated average soil loss per unit area (output of the equation).
-- **R**: Rainfall-runoff erosivity factor (climatic influence).
-- **K**: Soil erodibility factor (soil properties).
-- **LS**: Topographic factor combining slope length (**L**) and slope steepness (**S**).
-- **C**: Cover-management factor (land use and vegetation cover).
-- **P**: Support practice factor (soil conservation measures).
-
----
-
-**Application in Your Web App**:
-
-In the context of your web application:
-
-- **User Inputs**:
-  - Users can upload shapefiles representing their area of interest (AOI).
-  - They may also provide layers corresponding to any of the RUSLE factors (**R**, **K**, **LS**, **C**, **P**).
-
-- **Data Retrieval**:
-  - For any missing layers, the application can retrieve appropriate data proxies from **Google Earth Engine (GEE)** using its Python API.
-
-- **Processing**:
-  - The application will compute each factor based on the provided or retrieved data.
-  - It will then calculate the average annual soil loss (**A**) for the AOI using the RUSLE equation.
-
-- **Visualization**:
-  - The results, including the computed soil loss and intermediate factor layers, will be visualized on an interactive map.
-  - This allows users to understand not only the overall erosion risk but also the contributing factors.
+| Range (ton/ha/yr) | Class | Color |
+|-------------------|-------|-------|
+| 0 - 5 | Very Low | 🟢 Green |
+| 5 - 10 | Low | 🟡 Yellow-Green |
+| 10 - 20 | Moderate | 🟡 Yellow |
+| 20 - 30 | High | 🟠 Orange |
+| 30 - 40 | Very High | 🔴 Red-Orange |
+| 40 - 50 | Severe | 🔴 Red |
+| > 50 | Very Severe | 🔴 Dark Red |
 
 ---
 
-**Importance of Each Component**:
+## References
 
-Understanding each component is crucial for accurate soil loss estimation and effective soil conservation planning:
+1. Renard, K.G., Foster, G.R., Weesies, G.A., McCool, D.K., & Yoder, D.C. (1997). *Predicting Soil Erosion by Water: A Guide to Conservation Planning with the Revised Universal Soil Loss Equation (RUSLE)*. USDA Agricultural Handbook No. 703.
 
-- **Rainfall (R)**: Helps identify periods and areas of high erosive rainfall, guiding the timing of soil conservation measures.
-- **Soil (K)**: Indicates which soils are more vulnerable, informing soil management and amendment strategies.
-- **Topography (LS)**: Highlights areas where terrain exacerbates erosion, suggesting where to implement terracing or other slope management practices.
-- **Cover (C)**: Emphasizes the role of vegetation and ground cover, promoting practices like cover cropping or mulching.
-- **Practices (P)**: Demonstrates the effectiveness of erosion control measures, aiding in the selection of appropriate conservation techniques.
+2. Williams, J.R. (1995). The EPIC Model. In V.P. Singh (Ed.), *Computer Models of Watershed Hydrology*. Water Resources Publications.
 
----
+3. De Jong, S.M. (1994). Derivation of vegetative variables from a Landsat TM image for modelling soil erosion. *Earth Surface Processes and Landforms*, 19(2), 165-178.
 
-**References**:
+4. Chuenchum, P., Xu, M., & Tang, W. (2019). Estimation of soil erosion and sediment yield in the Lancang–Mekong river using the modified revised universal soil loss equation and GIS techniques. *Water*, 12(1), 135.
 
-- Renard, K.G., Foster, G.R., Weesies, G.A., McCool, D.K., & Yoder, D.C. (1997). *Predicting Soil Erosion by Water: A Guide to Conservation Planning with the Revised Universal Soil Loss Equation (RUSLE)*. USDA Agricultural Handbook No. 703.
-- [USDA Natural Resources Conservation Service (NRCS) - RUSLE](https://www3.epa.gov/npdes/pubs/ruslech2.pdf)
+5. Uddin, K., Abdul Matin, M., & Maharjan, S. (2018). Assessment of land cover change and its impact on changes in soil erosion risk in Nepal. *Sustainability*, 10(12), 4715.
 
 ---
+
+## License
+
+MIT License
