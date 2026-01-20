@@ -90,21 +90,25 @@ def load_soil_data(aoi: ee.Geometry) -> tuple:
     Returns:
         Tuple of (organic_carbon, clay, sand, silt) images
     """
+    # Load with unmask to fill gaps (common in coastal/water areas)
     organic_carbon = (
         ee.Image("OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02")
         .select('b0')
+        .unmask(1.5)  # Default organic carbon %
         .clip(aoi)
     )
 
     clay = (
         ee.Image("OpenLandMap/SOL/SOL_CLAY-WFRACTION_USDA-3A1A1A_M/v02")
         .select('b0')
+        .unmask(20)  # Default clay %
         .clip(aoi)
     )
 
     sand = (
         ee.Image("OpenLandMap/SOL/SOL_SAND-WFRACTION_USDA-3A1A1A_M/v02")
         .select('b0')
+        .unmask(40)  # Default sand %
         .clip(aoi)
     )
 
@@ -185,12 +189,15 @@ def load_area_from_gaul(region_name: str, admin_level: int = 1) -> ee.FeatureCol
         - Level 1: "Cataluña", "Île-de-France", "Bayern", "Toscana"
         - Level 2: "Barcelona", "Paris", "Milano"
     """
-    if admin_level == 0:
-        gaul = ee.FeatureCollection("FAO/GAUL/2015/level0")
-        return gaul.filter(ee.Filter.stringContains('ADM0_NAME', region_name))
-    elif admin_level == 1:
-        gaul = ee.FeatureCollection("FAO/GAUL/2015/level1")
-        return gaul.filter(ee.Filter.stringContains('ADM1_NAME', region_name))
-    else:
-        gaul = ee.FeatureCollection("FAO/GAUL/2015/level2")
-        return gaul.filter(ee.Filter.stringContains('ADM2_NAME', region_name))
+    # Validate admin_level
+    if admin_level not in (0, 1, 2):
+        raise ValueError(f"admin_level must be 0, 1, or 2, got {admin_level}")
+    
+    # Build collection and field name dynamically
+    collection_id = f"FAO/GAUL/2015/level{admin_level}"
+    field_name = f"ADM{admin_level}_NAME"
+    
+    logger.info(f"Querying {collection_id} with {field_name} containing '{region_name}'")
+    
+    gaul = ee.FeatureCollection(collection_id)
+    return gaul.filter(ee.Filter.stringContains(field_name, region_name))

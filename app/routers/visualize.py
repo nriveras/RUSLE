@@ -45,6 +45,9 @@ async def get_map_config(job_id: str) -> MapConfig:
         # Get center of AOI
         centroid = cached['aoi'].centroid().coordinates().getInfo()
         
+        # Viridis color palette
+        viridis = ['440154', '482878', '3e4a89', '31688e', '26828e', '1f9e89', '35b779', '6ece58', 'b5de2b', 'fde725']
+        
         # Prepare layer configurations
         layers = [
             {
@@ -52,7 +55,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].soil_loss, {
                     'min': 0, 'max': 50,
-                    'palette': ['00ff00', '7fff00', 'ffff00', 'ffa500', 'ff4500', 'ff0000', '8b0000']
+                    'palette': viridis
                 }),
                 'visible': True,
                 'opacity': 0.8
@@ -62,7 +65,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].r_factor, {
                     'min': 0, 'max': 5000,
-                    'palette': ['blue', 'green', 'yellow', 'orange', 'red']
+                    'palette': viridis
                 }),
                 'visible': False,
                 'opacity': 0.8
@@ -72,7 +75,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].k_factor, {
                     'min': 0.3, 'max': 0.5,
-                    'palette': ['blue', 'green', 'yellow', 'orange', 'red']
+                    'palette': viridis
                 }),
                 'visible': False,
                 'opacity': 0.8
@@ -82,7 +85,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].l_factor, {
                     'min': 1, 'max': 1.2,
-                    'palette': ['green', 'yellow', 'red']
+                    'palette': viridis
                 }),
                 'visible': False,
                 'opacity': 0.8
@@ -92,7 +95,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].s_factor, {
                     'min': 0, 'max': 45,
-                    'palette': ['green', 'yellow', 'red']
+                    'palette': viridis
                 }),
                 'visible': False,
                 'opacity': 0.8
@@ -102,7 +105,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].c_factor, {
                     'min': 0, 'max': 0.5,
-                    'palette': ['green', 'yellow', 'red']
+                    'palette': viridis
                 }),
                 'visible': False,
                 'opacity': 0.8
@@ -112,7 +115,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].p_factor, {
                     'min': 0, 'max': 1,
-                    'palette': ['blue', 'green', 'yellow', 'orange', 'red']
+                    'palette': viridis
                 }),
                 'visible': False,
                 'opacity': 0.8
@@ -175,10 +178,13 @@ async def get_folium_map(
                 show=show
             ).add_to(m)
         
+        # Viridis color palette
+        viridis = ['440154', '482878', '3e4a89', '31688e', '26828e', '1f9e89', '35b779', '6ece58', 'b5de2b', 'fde725']
+        
         # Add soil loss layer
         add_ee_layer(
             cached['result'].soil_loss,
-            {'min': 0, 'max': 50, 'palette': ['00ff00', '7fff00', 'ffff00', 'ffa500', 'ff4500', 'ff0000', '8b0000']},
+            {'min': 0, 'max': 50, 'palette': viridis},
             'Soil Loss (ton/ha/yr)',
             show=True
         )
@@ -186,42 +192,42 @@ async def get_folium_map(
         # Add factor layers (hidden by default)
         add_ee_layer(
             cached['result'].r_factor,
-            {'min': 0, 'max': 5000, 'palette': ['blue', 'green', 'yellow', 'orange', 'red']},
+            {'min': 0, 'max': 5000, 'palette': viridis},
             'R Factor (Rainfall Erosivity)',
             show=False
         )
         
         add_ee_layer(
             cached['result'].k_factor,
-            {'min': 0.3, 'max': 0.5, 'palette': ['blue', 'green', 'yellow', 'orange', 'red']},
+            {'min': 0.3, 'max': 0.5, 'palette': viridis},
             'K Factor (Soil Erodibility)',
             show=False
         )
         
         add_ee_layer(
             cached['result'].l_factor,
-            {'min': 1, 'max': 1.2, 'palette': ['green', 'yellow', 'red']},
+            {'min': 1, 'max': 1.2, 'palette': viridis},
             'L Factor (Slope Length)',
             show=False
         )
         
         add_ee_layer(
             cached['result'].s_factor,
-            {'min': 0, 'max': 45, 'palette': ['green', 'yellow', 'red']},
+            {'min': 0, 'max': 45, 'palette': viridis},
             'S Factor (Slope Steepness)',
             show=False
         )
         
         add_ee_layer(
             cached['result'].c_factor,
-            {'min': 0, 'max': 0.5, 'palette': ['green', 'yellow', 'red']},
+            {'min': 0, 'max': 0.5, 'palette': viridis},
             'C Factor (Vegetation Cover)',
             show=False
         )
         
         add_ee_layer(
             cached['result'].p_factor,
-            {'min': 0, 'max': 1, 'palette': ['blue', 'green', 'yellow', 'orange', 'red']},
+            {'min': 0, 'max': 1, 'palette': viridis},
             'P Factor (Erosion Control)',
             show=False
         )
@@ -229,10 +235,10 @@ async def get_folium_map(
         # Add layer control
         folium.LayerControl().add_to(m)
         
-        # Add colorbar for soil loss
+        # Add colorbar for soil loss (viridis)
         import branca.colormap as cm
         colormap = cm.LinearColormap(
-            colors=['#00ff00', '#7fff00', '#ffff00', '#ffa500', '#ff4500', '#ff0000', '#8b0000'],
+            colors=['#440154', '#482878', '#3e4a89', '#31688e', '#26828e', '#1f9e89', '#35b779', '#6ece58', '#b5de2b', '#fde725'],
             vmin=0,
             vmax=50,
             caption='Soil Loss (ton/ha/year)'
@@ -254,13 +260,13 @@ async def get_legend_info():
     """
     return {
         'soil_loss_classes': [
-            {'range': '0-5', 'label': 'Very Low', 'color': '#00ff00'},
-            {'range': '5-10', 'label': 'Low', 'color': '#7fff00'},
-            {'range': '10-20', 'label': 'Moderate', 'color': '#ffff00'},
-            {'range': '20-30', 'label': 'High', 'color': '#ffa500'},
-            {'range': '30-40', 'label': 'Very High', 'color': '#ff4500'},
-            {'range': '40-50', 'label': 'Severe', 'color': '#ff0000'},
-            {'range': '>50', 'label': 'Very Severe', 'color': '#8b0000'},
+            {'range': '0-5', 'label': 'Very Low', 'color': '#440154'},
+            {'range': '5-10', 'label': 'Low', 'color': '#482878'},
+            {'range': '10-20', 'label': 'Moderate', 'color': '#31688e'},
+            {'range': '20-30', 'label': 'High', 'color': '#1f9e89'},
+            {'range': '30-40', 'label': 'Very High', 'color': '#6ece58'},
+            {'range': '40-50', 'label': 'Severe', 'color': '#b5de2b'},
+            {'range': '>50', 'label': 'Very Severe', 'color': '#fde725'},
         ],
         'unit': 'ton/ha/year'
     }

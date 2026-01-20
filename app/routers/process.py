@@ -158,6 +158,7 @@ async def process_rusle(request: ProcessRequest):
         if request.session_id:
             aoi = _get_aoi_from_session(request.session_id)
         else:
+            logger.info(f"Loading admin region: '{request.admin_region}' at level {request.admin_level}")
             aoi = _get_aoi_from_admin(request.admin_region, request.admin_level)
         
         # Calculate area and determine minimum export scale
@@ -188,21 +189,27 @@ async def process_rusle(request: ProcessRequest):
         # Run calculation
         result = calculator.calculate(inputs)
         
+        # Viridis color palette for all visualizations
+        viridis_palette = ['440154', '482878', '3e4a89', '31688e', '26828e', '1f9e89', '35b779', '6ece58', 'b5de2b', 'fde725']
+        
         # Get tile URLs for visualization
         soil_loss_vis = {
             'min': 0,
             'max': 50,
-            'palette': ['00ff00', '7fff00', 'ffff00', 'ffa500', 'ff4500', 'ff0000', '8b0000']
+            'palette': viridis_palette
         }
         
         factor_vis = {
             'min': 0,
             'max': 1,
-            'palette': ['blue', 'green', 'yellow', 'orange', 'red']
+            'palette': viridis_palette
         }
         
         # Build response with tile URLs
-        soil_loss_tile_url = calculator.get_tile_url(result.soil_loss, soil_loss_vis)
+        # Pass the adjusted_scale for large areas to enable reprojection
+        soil_loss_tile_url = calculator.get_tile_url(
+            result.soil_loss, soil_loss_vis, scale=adjusted_scale
+        )
         
         factors = {
             'R': FactorInfo(
@@ -211,7 +218,8 @@ async def process_rusle(request: ProcessRequest):
                 unit='MJ·mm/(ha·h·yr)',
                 tile_url=calculator.get_tile_url(
                     result.r_factor,
-                    {'min': 0, 'max': 5000, 'palette': factor_vis['palette']}
+                    {'min': 0, 'max': 5000, 'palette': factor_vis['palette']},
+                    scale=adjusted_scale
                 )
             ),
             'K': FactorInfo(
@@ -220,7 +228,8 @@ async def process_rusle(request: ProcessRequest):
                 unit='t·ha·h/(ha·MJ·mm)',
                 tile_url=calculator.get_tile_url(
                     result.k_factor,
-                    {'min': 0.3, 'max': 0.5, 'palette': factor_vis['palette']}
+                    {'min': 0.3, 'max': 0.5, 'palette': factor_vis['palette']},
+                    scale=adjusted_scale
                 )
             ),
             'L': FactorInfo(
@@ -229,7 +238,8 @@ async def process_rusle(request: ProcessRequest):
                 unit='dimensionless',
                 tile_url=calculator.get_tile_url(
                     result.l_factor,
-                    {'min': 1, 'max': 1.2, 'palette': factor_vis['palette']}
+                    {'min': 1, 'max': 1.2, 'palette': factor_vis['palette']},
+                    scale=adjusted_scale
                 )
             ),
             'S': FactorInfo(
@@ -238,7 +248,8 @@ async def process_rusle(request: ProcessRequest):
                 unit='dimensionless',
                 tile_url=calculator.get_tile_url(
                     result.s_factor,
-                    {'min': 0, 'max': 45, 'palette': factor_vis['palette']}
+                    {'min': 0, 'max': 45, 'palette': factor_vis['palette']},
+                    scale=adjusted_scale
                 )
             ),
             'C': FactorInfo(
@@ -247,7 +258,8 @@ async def process_rusle(request: ProcessRequest):
                 unit='dimensionless',
                 tile_url=calculator.get_tile_url(
                     result.c_factor,
-                    {'min': 0, 'max': 0.5, 'palette': factor_vis['palette']}
+                    {'min': 0, 'max': 0.5, 'palette': factor_vis['palette']},
+                    scale=adjusted_scale
                 )
             ),
             'P': FactorInfo(
@@ -256,7 +268,8 @@ async def process_rusle(request: ProcessRequest):
                 unit='dimensionless',
                 tile_url=calculator.get_tile_url(
                     result.p_factor,
-                    {'min': 0, 'max': 1, 'palette': factor_vis['palette']}
+                    {'min': 0, 'max': 1, 'palette': factor_vis['palette']},
+                    scale=adjusted_scale
                 )
             ),
         }
@@ -404,6 +417,8 @@ def _get_aoi_from_admin(admin_region: str, admin_level: int = 1):
     
     # Check if we got results
     count = fc.size().getInfo()
+    logger.info(f"Found {count} features for '{admin_region}' at level {admin_level}")
+    
     if count == 0:
         level_names = {0: 'country', 1: 'region/state', 2: 'province/county'}
         raise ValueError(

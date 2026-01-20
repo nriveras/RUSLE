@@ -4,7 +4,7 @@ Implementation of the RUSLE model using Google Earth Engine and Python, availabl
 
 ## Example Output
 
-![RUSLE Soil Loss - Metropolitana Region](03_output/RUSLE_soil_loss_Metropolitana_2022-11-14_to_2023-11-14_preview.jpg)
+![RUSLE Soil Loss - Metropolitana Region](03_output/RUSLE_soil_loss_Germany_2021-01-20_to_2022-01-20_preview_app.png)
 
 *Soil loss estimation for the Metropolitana Region, Chile (2022-11-14 to 2023-11-14)*
 

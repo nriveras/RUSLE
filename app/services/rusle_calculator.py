@@ -144,7 +144,18 @@ class RUSLECalculator:
             .multiply(p_factor)
             .multiply(pixel_area_ha)
             .rename('soil_loss')
+            .unmask(0)  # Fill any remaining gaps with 0 soil loss
+            .clip(aoi)  # Clip final result to AOI
         )
+        
+        # Also clip all factors to AOI for consistent visualization
+        # unmask already applied in individual factor calculations
+        r_factor = r_factor.clip(aoi)
+        k_factor = k_factor.clip(aoi)
+        l_factor = l_factor.clip(aoi)
+        s_factor = s_factor.clip(aoi)
+        c_factor = c_factor.clip(aoi)
+        p_factor = p_factor.clip(aoi)
         
         computation_time = (datetime.now() - start_time).total_seconds()
         logger.info(f"RUSLE calculation completed in {computation_time:.2f}s")
@@ -214,6 +225,7 @@ class RUSLECalculator:
         k_factor = (
             f_csand.multiply(f_cl_si).multiply(f_orgc).multiply(f_hisand)
             .rename('K_factor')
+            .unmask(0.04)  # Fill gaps with average K-factor value
             .clip(aoi)
         )
         
@@ -243,6 +255,7 @@ class RUSLECalculator:
         r_factor = (
             pcp_sum.pow(1.610).multiply(0.0483)
             .rename('R_factor')
+            .unmask(0)  # Fill gaps with 0 (no rainfall erosivity)
         )
         
         return r_factor
@@ -278,6 +291,7 @@ class RUSLECalculator:
         l_factor = (
             ee.Image(pixel_size).divide(22.13).pow(m_exponent)
             .rename('L_factor')
+            .unmask(1)  # Fill gaps with neutral L-factor value
             .clip(aoi)
         )
         
@@ -288,6 +302,7 @@ class RUSLECalculator:
             .add(0.43)
             .divide(6.613)
             .rename('S_factor')
+            .unmask(0.065)  # Fill gaps with flat terrain S-factor
             .clip(aoi)
         )
         
@@ -319,6 +334,8 @@ class RUSLECalculator:
         c_factor = (
             ee.Image(0.431).subtract(ndvi.multiply(0.805))
             .rename('C_factor')
+            .unmask(0.15)  # Fill gaps with moderate vegetation cover value
+            .clip(aoi)
         )
         
         return c_factor
@@ -345,7 +362,12 @@ class RUSLECalculator:
         ]
         expression = ": ".join(expression_parts) + ": 1.0"
         
-        p_factor = lulc.expression(expression).rename('P_factor').clip(aoi)
+        p_factor = (
+            lulc.expression(expression)
+            .rename('P_factor')
+            .unmask(1.0)  # Fill gaps with neutral P-factor (no conservation)
+            .clip(aoi)
+        )
         
         return p_factor
     
@@ -398,17 +420,30 @@ class RUSLECalculator:
     def get_tile_url(
         self,
         image: ee.Image,
-        vis_params: Dict[str, Any]
+        vis_params: Dict[str, Any],
+        scale: int = None
     ) -> str:
         """
         Get a tile URL for displaying the image on a web map.
         
+        For large areas, we reproject to a coarser resolution to ensure
+        all tiles can be computed within GEE limits.
+        
         Args:
             image: Earth Engine image
             vis_params: Visualization parameters
+            scale: Optional scale for reprojection (meters per pixel)
             
         Returns:
             Tile URL template
         """
+        # For visualization, reproject to coarser resolution if scale provided
+        # This helps with large areas that exceed GEE computation limits
+        if scale and scale > 100:
+            image = image.reproject(
+                crs='EPSG:4326',
+                scale=scale
+            )
+        
         map_id = image.getMapId(vis_params)
         return map_id['tile_fetcher'].url_format
