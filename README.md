@@ -22,7 +22,7 @@ Implementation of the RUSLE model using Google Earth Engine and Python, availabl
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/nriveras/RUSLE.git
 cd RUSLE
 
 # Install dependencies with uv (creates .venv automatically)
