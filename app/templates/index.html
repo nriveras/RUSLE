@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1><i class="fas fa-layer-group"></i> RUSLE Soil Loss Calculator</h1>
+        <p>Revised Universal Soil Loss Equation - Web Application</p>
+    </header>
+    
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 80px; right: 20px; z-index: 1001; width: 350px;"></div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <div id="loading-text" class="loading-text">Loading...</div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Upload Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-upload"></i> Area of Interest
+                    </div>
+                    <div class="card-body">
+                        <!-- Tabs for upload method -->
+                        <div class="tabs">
+                            <div class="tab active" data-tab="tab-upload" onclick="switchTab('tab-upload')">
+                                <i class="fas fa-file-upload"></i> Upload
+                            </div>
+                            <div class="tab" data-tab="tab-region" onclick="switchTab('tab-region')">
+                                <i class="fas fa-globe"></i> Region
+                            </div>
+                        </div>
+                        
+                        <!-- Upload Tab -->
+                        <div id="tab-upload" class="tab-content active">
+                            <div id="drop-area" class="file-upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drop shapefile (ZIP) or GeoJSON here</p>
+                                <p class="hint">or click to browse</p>
+                            </div>
+                            <input type="file" id="file-input" accept=".zip,.geojson" style="display: none;">
+                            
+                            <div id="file-info" class="file-info hidden">
+                                <i class="fas fa-file-archive"></i>
+                                <span id="file-name">filename.zip</span>
+                                <i class="fas fa-times remove-file" onclick="removeFile()"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Region Tab -->
+                        <div id="tab-region" class="tab-content">
+                            <div class="form-group">
+                                <label for="admin-region">Administrative Region Name</label>
+                                <input type="text" id="admin-region" placeholder="e.g., Metropolitana">
+                                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                                    Uses FAO GAUL boundaries
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Parameters Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-sliders-h"></i> Analysis Parameters
+                    </div>
+                    <div class="card-body">
+                        <form id="rusle-form">
+                            <div class="form-group">
+                                <label for="date-from">Start Date</label>
+                                <input type="date" id="date-from" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="date-to">End Date</label>
+                                <input type="date" id="date-to" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dem-source">DEM Source</label>
+                                <select id="dem-source">
+                                    <option value="SRTM">SRTM (30m global)</option>
+                                    <option value="MERIT">MERIT (90m)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="export-scale">Export Resolution (m)</label>
+                                <input type="number" id="export-scale" value="90" min="10" max="1000">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-play"></i> Calculate Soil Loss
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Legend Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle"></i> Legend
+                    </div>
+                    <div class="card-body">
+                        <div id="legend" class="legend">
+                            <!-- Legend items populated by JS -->
+                        </div>
+                        <p style="margin-top: 0.75rem; font-size: 0.8125rem; color: var(--text-secondary);">
+                            Soil Loss (ton/ha/year)
+                        </p>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Map Area -->
+            <main>
+                <!-- Map Container -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-map"></i> Map View
+                    </div>
+                    <div class="map-container">
+                        <div id="map"></div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div id="results-section" class="results-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar"></i> Results
+                        </div>
+                        <div class="card-body">
+                            <!-- Statistics -->
+                            <h4 style="margin-bottom: 1rem;">Soil Loss Statistics</h4>
+                            <div id="stats-container" class="stats-grid">
+                                <!-- Stats populated by JS -->
+                            </div>
+                            
+                            <!-- Layer Controls -->
+                            <h4 style="margin: 1.5rem 0 1rem;">Map Layers</h4>
+                            <div id="layer-list" class="layer-control">
+                                <!-- Layer controls populated by JS -->
+                            </div>
+                            
+                            <!-- Export Button -->
+                            <div style="margin-top: 1.5rem;">
+                                <button class="btn btn-secondary" onclick="exportToDrive()">
+                                    <i class="fab fa-google-drive"></i> Export to Google Drive
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            RUSLE Web Application | Based on the 
+            <a href="https://www.ars.usda.gov/southeast-area/oxford-ms/national-sedimentation-laboratory/watershed-physical-processes-research/research/rusle2/revised-universal-soil-loss-equation-2-overview-of-rusle2/" target="_blank">
+                Revised Universal Soil Loss Equation
+            </a>
+        </p>
+        <p style="margin-top: 0.5rem;">
+            Powered by <a href="https://earthengine.google.com/" target="_blank">Google Earth Engine</a>
+        </p>
+    </footer>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

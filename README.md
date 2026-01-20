@@ -1,6 +1,6 @@
 # RUSLE - Revised Universal Soil Loss Equation
 
-Implementation of the RUSLE model using Google Earth Engine and Python.
+Implementation of the RUSLE model using Google Earth Engine and Python, available both as a Jupyter notebook and a web application.
 
 ## Example Output
 
@@ -34,7 +34,26 @@ source .venv/bin/activate  # Linux/macOS
 .venv\Scripts\activate     # Windows
 ```
 
-### Running the Notebook
+### Option 1: Run the Web Application
+
+```bash
+# Start the web server
+python run.py
+
+# Or with auto-reload for development
+python run.py --reload
+```
+
+Open your browser at **http://localhost:8000/app**
+
+The web application allows you to:
+- Upload shapefiles (ZIP) or GeoJSON files as area of interest
+- Select an administrative region by name (uses FAO GAUL boundaries)
+- Specify date range for analysis
+- Visualize soil loss and all RUSLE factors on an interactive map
+- Export results to Google Drive
+
+### Option 2: Run the Jupyter Notebook
 
 1. Open VS Code and select the `.venv` Python interpreter
 2. Open `00_scripts/RUSLE.ipynb`
@@ -44,7 +63,39 @@ source .venv/bin/activate  # Linux/macOS
 
 1. Create a GEE project at [Google Cloud Console](https://console.cloud.google.com/)
 2. Enable the Earth Engine API
-3. Update `GEE_PROJECT` in the notebook with your project ID
+3. Register for Earth Engine at [https://earthengine.google.com/signup/](https://earthengine.google.com/signup/)
+4. Update `GEE_PROJECT` in the notebook or `.env` file with your project ID
+
+---
+
+## Web Application Architecture
+
+```
+app/
+├── main.py              # FastAPI application entry point
+├── config.py            # Configuration settings
+├── routers/
+│   ├── upload.py        # File upload endpoints
+│   ├── process.py       # RUSLE calculation endpoints
+│   └── visualize.py     # Map visualization endpoints
+├── services/
+│   ├── gee_service.py       # Google Earth Engine integration
+│   ├── rusle_calculator.py  # RUSLE factor calculations
+│   └── shapefile_handler.py # Shapefile processing
+├── static/              # CSS and JavaScript
+└── templates/           # HTML templates
+```
+
+### API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/upload` | POST | Upload shapefile or GeoJSON |
+| `/api/process` | POST | Run RUSLE calculation |
+| `/api/process/{job_id}/statistics` | GET | Get result statistics |
+| `/api/process/{job_id}/export` | POST | Export to Google Drive |
+| `/api/visualize/{job_id}` | GET | Get map configuration |
+| `/api/visualize/{job_id}/folium` | GET | Get Folium HTML map |
 
 ---
 
@@ -60,24 +111,31 @@ source .venv/bin/activate  # Linux/macOS
 ```mermaid
 graph TD
     subgraph "User Interface"
-        Start[Start] --> UI["Web Application Frontend<br>(Flask or FastAPI)<br/>"]
+        Start[Start] --> UI["Web Application Frontend<br>(FastAPI + Jinja2)<br/>"]
         UI --> InputAOI["User Uploads AOI Shapefile and set dates <br>(File Upload Form)<br/>"]
         InputAOI --> CheckLayers{"Does User Provide<br/>RUSLE Layers?<br>"}
     end
 
-    subgraph "Backend (Django & GeoDjango)"
+    subgraph "Backend (FastAPI)"
         CheckLayers --> |Yes| UseUserLayers["Use User-provided<br>RUSLE Layers<br/>"]
         CheckLayers --> |No| FetchLayers["Fetch Missing Layers from GEE<br>(Earth Engine Python API)<br/>"]
         FetchLayers --> GEE["Google Earth Engine"]
         GEE --> FetchLayers
-        UseUserLayers & FetchLayers --> PrepareLayers["Prepare RUSLE Layers<br>(GeoPandas, GDAL, Rasterio)<br/>"]
-        PrepareLayers --> StoreData["Store Data in PostGIS"]
-        StoreData --> CalculateRUSLE["Calculate Soil Loss using RUSLE<br>(NumPy, Pandas)<br/>"]
+        UseUserLayers & FetchLayers --> PrepareLayers["Prepare RUSLE Layers<br>(GeoPandas, Rasterio)<br/>"]
+        PrepareLayers --> CalculateRUSLE["Calculate Soil Loss using RUSLE<br>(Earth Engine)<br/>"]
     end
 
-    subgraph "Asynchronous Processing (Celery & Redis)"
-        CalculateRUSLE --> AsyncProcessing["Handle Long Computations"]
-        AsyncProcessing --> GenerateMaps["Generate Output Maps<br>(Matplotlib, Folium)<br/>"]
+    CalculateRUSLE --> GenerateMaps["Generate Output Maps<br>(Folium, Leaflet.js)<br/>"]
+
+    GenerateMaps --> Visualization
+
+    subgraph "Visualization (Leaflet.js)"
+        Visualization --> DisplayResults["Display Soil Loss Map<br>(Interactive Map)<br/>"]
+        DisplayResults --> |Toggle Layers| DisplayIntermediate["Display Intermediate Layers"]
+    end
+
+    DisplayResults --> End[End]
+```
     end
 
     GenerateMaps --> Visualization

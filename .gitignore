@@ -81,6 +81,14 @@ Thumbs.db
 03_output/*.tiff
 03_output/*.aux.xml
 
+# Web app uploads (temporary files)
+data/uploads/*
+!data/uploads/.gitkeep
+
+# Web app output
+data/output/*
+!data/output/.gitkeep
+
 # Temporary files
 *.tmp
 *.temp
