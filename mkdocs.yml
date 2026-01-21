@@ -10,18 +10,9 @@ repo_url: https://github.com/nriveras/RUSLE
 theme:
   name: material
   palette:
-    - scheme: slate
-      primary: green
-      accent: orange
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
-    - scheme: default
-      primary: green
-      accent: orange
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
+    scheme: slate
+    primary: green
+    accent: orange
   features:
     - navigation.instant
     - navigation.tracking
