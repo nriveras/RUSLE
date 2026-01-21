@@ -49,6 +49,10 @@ dev-dependencies = [
     "ipykernel>=6.29.0",
     "jupyter>=1.0.0",
     "ipywidgets>=8.1.0",
+    # Documentation
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.24.0",
+    "pymdown-extensions>=10.7.0",
 ]
 
 [tool.uv.sources]

@@ -1,0 +1,79 @@
+site_name: RUSLE Documentation
+site_description: Revised Universal Soil Loss Equation implementation using Google Earth Engine
+site_author: Nico Riveras
+site_url: https://nriveras.github.io/RUSLE/
+
+repo_name: nriveras/RUSLE
+repo_url: https://github.com/nriveras/RUSLE
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - toc.follow
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+      - GEE Setup: getting-started/gee-setup.md
+  - User Guide:
+      - Web Application: user-guide/web-app.md
+      - Jupyter Notebook: user-guide/notebook.md
+      - Docker Deployment: user-guide/docker.md
+  - Reference:
+      - RUSLE Model: reference/rusle-model.md
+      - API Reference: reference/api.md
+      - Configuration: reference/configuration.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/nriveras/RUSLE

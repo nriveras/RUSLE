@@ -1,6 +1,10 @@
 # RUSLE - Revised Universal Soil Loss Equation
 
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://nriveras.github.io/RUSLE/)
+
 Implementation of the RUSLE model using Google Earth Engine and Python, available both as a Jupyter notebook and a web application.
+
+📖 **[View Full Documentation](https://nriveras.github.io/RUSLE/)**
 
 ## Example Output
 
