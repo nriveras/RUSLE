@@ -2,6 +2,7 @@ site_name: RUSLE Documentation
 site_description: Revised Universal Soil Loss Equation implementation using Google Earth Engine
 site_author: Nico Riveras
 site_url: https://nriveras.github.io/RUSLE/
+use_directory_urls: true
 
 repo_name: nriveras/RUSLE
 repo_url: https://github.com/nriveras/RUSLE
@@ -56,7 +57,7 @@ markdown_extensions:
 
 extra_javascript:
   - javascripts/mathjax.js
-  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
   - Home: index.md

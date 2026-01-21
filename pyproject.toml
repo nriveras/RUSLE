@@ -44,16 +44,18 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["00_scripts", "app"]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "ipykernel>=6.29.0",
     "jupyter>=1.0.0",
     "ipywidgets>=8.1.0",
     # Documentation
     "mkdocs-material>=9.5.0",
-    "mkdocstrings[python]>=0.24.0",
     "pymdown-extensions>=10.7.0",
 ]
+
+[tool.uv]
+default-groups = ["dev"]
 
 [tool.uv.sources]
 # Add any custom sources here if needed
