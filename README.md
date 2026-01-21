@@ -246,13 +246,13 @@ Where:
 
 | Range (ton/ha/yr) | Class | Color |
 |-------------------|-------|-------|
-| 0 - 5 | Very Low | 🟢 Green |
-| 5 - 10 | Low | 🟡 Yellow-Green |
-| 10 - 20 | Moderate | 🟡 Yellow |
-| 20 - 30 | High | 🟠 Orange |
-| 30 - 40 | Very High | 🔴 Red-Orange |
-| 40 - 50 | Severe | 🔴 Red |
-| > 50 | Very Severe | 🔴 Dark Red |
+| 0 - 5 | Very Low | � Dark Purple (#440154) |
+| 5 - 10 | Low | 🟣 Purple (#482878) |
+| 10 - 20 | Moderate | 🔵 Blue (#31688e) |
+| 20 - 30 | High | 🟢 Teal (#1f9e89) |
+| 30 - 40 | Very High | 🟢 Green (#35b779) |
+| 40 - 50 | Severe | 🟡 Lime (#b5de2b) |
+| > 50 | Very Severe | 🟡 Yellow (#fde725) |
 
 ---
 
