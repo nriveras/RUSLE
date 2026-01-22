@@ -11,7 +11,7 @@ theme:
   name: material
   palette:
     scheme: slate
-    primary: green
+    primary: "#154714"
     accent: orange
   features:
     - navigation.instant

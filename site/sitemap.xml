@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://nriveras.github.io/RUSLE/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/getting-started/gee-setup/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/getting-started/installation/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/getting-started/quickstart/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/reference/api/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/reference/configuration/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/reference/rusle-model/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/user-guide/docker/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/user-guide/notebook/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://nriveras.github.io/RUSLE/user-guide/web-app/</loc>
-         <lastmod>2026-01-21</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
 </urlset>
