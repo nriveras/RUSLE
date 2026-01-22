@@ -20,7 +20,7 @@ Implementation of the RUSLE model using Google Earth Engine and Python, availabl
 
 - [uv](https://docs.astral.sh/uv/) - Fast Python package installer
 - Python 3.10+ (managed automatically by uv)
-- Google Earth Engine account
+- [Google Earth Engine account](https://courses.spatialthoughts.com/gee-sign-up.html)
 
 ### Installation
 
