@@ -1,19 +1,20 @@
 /* RUSLE Web Application Styles */
 
 :root {
-    --primary-color: #2e7d32;
-    --primary-light: #60ad5e;
-    --primary-dark: #005005;
+    --primary-color: #2F732D;
+    --primary-light: #5aa258;
+    --primary-dark: #1a4a19;
     --secondary-color: #1565c0;
     --accent-color: #ff6f00;
-    --background-color: #f5f5f5;
-    --card-background: #ffffff;
-    --text-primary: #212121;
-    --text-secondary: #757575;
-    --border-color: #e0e0e0;
-    --error-color: #d32f2f;
-    --success-color: #388e3c;
-    --warning-color: #f57c00;
+    --background-color: #1a1a1a;
+    --card-background: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #404040;
+    --error-color: #ef5350;
+    --success-color: #66bb6a;
+    --warning-color: #ffa726;
+    --input-background: #3a3a3a;
 }
 
 * {
@@ -117,6 +118,8 @@ select {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 0.9375rem;
+    background-color: var(--input-background);
+    color: var(--text-primary);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -124,7 +127,7 @@ input:focus,
 select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    box-shadow: 0 0 0 3px rgba(47, 115, 45, 0.2);
 }
 
 /* File Upload */
@@ -140,7 +143,7 @@ select:focus {
 .file-upload-area:hover,
 .file-upload-area.dragover {
     border-color: var(--primary-color);
-    background: rgba(46, 125, 50, 0.05);
+    background: rgba(47, 115, 45, 0.15);
 }
 
 .file-upload-area i {
@@ -164,7 +167,7 @@ select:focus {
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem;
-    background: rgba(46, 125, 50, 0.1);
+    background: rgba(47, 115, 45, 0.2);
     border-radius: 4px;
     margin-top: 0.75rem;
 }
@@ -412,7 +415,7 @@ select:focus {
 }
 
 .tab:hover {
-    background: rgba(46, 125, 50, 0.05);
+    background: rgba(47, 115, 45, 0.15);
 }
 
 .tab.active {
