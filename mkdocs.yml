@@ -14,7 +14,6 @@ theme:
     primary: "#154714"
     accent: orange
   features:
-    - navigation.instant
     - navigation.tracking
     - navigation.tabs
     - navigation.sections
@@ -36,6 +35,20 @@ plugins:
         - locale: es
           name: Español
           build: true
+          nav_translations:
+            Home: Inicio
+            Getting Started: Primeros Pasos
+            Installation: Instalación
+            Quick Start: Inicio Rápido
+            GEE Setup: Configuración de GEE
+            User Guide: Guía de Usuario
+            Web Application: Aplicación Web
+            Jupyter Notebook: Cuaderno Jupyter
+            Docker Deployment: Despliegue con Docker
+            Reference: Referencia
+            RUSLE Model: Modelo RUSLE
+            API Reference: Referencia de API
+            Configuration: Configuración
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -79,6 +92,13 @@ nav:
       - Configuration: reference/configuration.md
 
 extra:
+  alternate:
+    - name: English
+      link: /RUSLE/
+      lang: en
+    - name: Español
+      link: /RUSLE/es/
+      lang: es
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/nriveras/RUSLE
