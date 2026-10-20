@@ -227,7 +227,7 @@ Where:
 
 | Factor | Name | Description | Unit |
 |--------|------|-------------|------|
-| **A** | Soil Loss | Average annual soil loss | ton/ha/year |
+| **A** | Soil Loss | Average annual soil loss | t/ha/year |
 | **R** | Rainfall Erosivity | Effect of rainfall intensity | MJ·mm/(ha·h·yr) |
 | **K** | Soil Erodibility | Susceptibility of soil to erosion | t·ha·h/(ha·MJ·mm) |
 | **L** | Slope Length | Effect of slope length | dimensionless |
@@ -248,7 +248,7 @@ Where:
 
 ## Soil Loss Classification
 
-| Range (ton/ha/yr) | Class | Color |
+| Range (t/ha/yr) | Class | Color |
 |-------------------|-------|-------|
 | 0 - 5 | Very Low | � Dark Purple (#440154) |
 | 5 - 10 | Low | 🟣 Purple (#482878) |

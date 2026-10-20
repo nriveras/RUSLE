@@ -51,7 +51,7 @@ async def get_map_config(job_id: str) -> MapConfig:
         # Prepare layer configurations
         layers = [
             {
-                'name': 'Soil Loss (ton/ha/yr)',
+                'name': 'Soil Loss (t/ha/yr)',
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].soil_loss, {
                     'min': 0, 'max': 50,
@@ -185,7 +185,7 @@ async def get_folium_map(
         add_ee_layer(
             cached['result'].soil_loss,
             {'min': 0, 'max': 50, 'palette': viridis},
-            'Soil Loss (ton/ha/yr)',
+            'Soil Loss (t/ha/yr)',
             show=True
         )
         
@@ -241,7 +241,7 @@ async def get_folium_map(
             colors=['#440154', '#482878', '#3e4a89', '#31688e', '#26828e', '#1f9e89', '#35b779', '#6ece58', '#b5de2b', '#fde725'],
             vmin=0,
             vmax=50,
-            caption='Soil Loss (ton/ha/year)'
+            caption='Soil Loss (t/ha/year)'
         )
         colormap.add_to(m)
         
@@ -268,7 +268,7 @@ async def get_legend_info():
             {'range': '40-50', 'label': 'Severe', 'color': '#b5de2b'},
             {'range': '>50', 'label': 'Very Severe', 'color': '#fde725'},
         ],
-        'unit': 'ton/ha/year'
+        'unit': 't/ha/year'
     }
 
 

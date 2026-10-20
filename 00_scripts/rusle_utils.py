@@ -526,7 +526,7 @@ def calculate_rusle(
         p_factor: Erosion control practices factor.
 
     Returns:
-        ee.Image: Soil loss in ton/ha/year.
+        ee.Image: Soil loss in t/ha/year.
     """
     soil_loss = (
         r_factor

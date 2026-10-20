@@ -370,7 +370,7 @@ function updateLayerControls(factors) {
     layerControl.innerHTML = '';
     
     // Soil loss layer (always visible by default)
-    addLayerControl('soilLoss', 'Soil Loss (ton/ha/yr)', true, state.layers.soilLoss);
+    addLayerControl('soilLoss', 'Soil Loss (t/ha/yr)', true, state.layers.soilLoss);
     
     // Add factor layers
     if (factors) {
