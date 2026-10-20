@@ -8,7 +8,7 @@ $$
 A = R \times K \times L \times S \times C \times P
 $$
 
-Donde **A** es la pérdida media anual de suelo en toneladas por hectárea por año (t/ha/año).
+Donde **A** es la pérdida media anual de suelo en toneladas métricas por hectárea por año (t/ha/año, donde t = Mg = 1.000 kg).
 
 ## Descripción de los Factores
 
@@ -50,11 +50,37 @@ def calculate_r_factor(aoi, start_date, end_date):
 
 ### Factor K: Erodibilidad del Suelo
 
-**Qué mide**: La susceptibilidad inherente del suelo a la erosión basada en textura, materia orgánica, estructura y permeabilidad.
+**Qué mide**: La susceptibilidad inherente del suelo a la erosión basada en textura y contenido de materia orgánica.
 
-**Fuente de Datos**: Conjuntos de datos de [Textura del Suelo OpenLandMap](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_TEXTURE-CLASS_USDA-TT_M_v02).
+**Fuente de Datos**: Contenido de [carbono orgánico](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_ORGANIC-CARBON_USDA-6A1C_M_v02), [arcilla](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_CLAY-WFRACTION_USDA-3A1A1A_M_v02) y [arena](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_SAND-WFRACTION_USDA-3A1A1A_M_v02) de OpenLandMap; el limo es el resto (100 - arcilla - arena).
 
-**Valores Típicos**:
+**Método de Cálculo** (Sharpley & Williams, 1990; usado en el modelo EPIC de Williams, 1995):
+
+$$
+K_{USLE} = f_{csand} \cdot f_{cl\text{-}si} \cdot f_{orgc} \cdot f_{hisand}
+$$
+
+$$
+f_{csand} = 0.2 + 0.3 \cdot e^{-0.0256 \cdot m_s \cdot (1 - m_{silt}/100)}
+$$
+
+$$
+f_{cl\text{-}si} = \left(\frac{m_{silt}}{m_c + m_{silt}}\right)^{0.3}
+$$
+
+$$
+f_{orgc} = 1 - \frac{0.25 \cdot orgC}{orgC + e^{3.72 - 2.95 \cdot orgC}}
+$$
+
+$$
+f_{hisand} = 1 - \frac{0.7 \cdot (1 - m_s/100)}{(1 - m_s/100) + e^{-5.51 + 22.9 \cdot (1 - m_s/100)}}
+$$
+
+Donde $m_s$, $m_{silt}$, $m_c$ son los porcentajes de arena, limo y arcilla, y $orgC$ es el porcentaje de carbono orgánico.
+
+$K_{USLE}$ resulta en unidades consuetudinarias estadounidenses (short ton·ac·h/(100 ft·short ton·ac·in)). La implementación lo multiplica por **0.1317** (Foster et al., 1981) para convertirlo a la unidad SI usada en todo el proyecto, t·ha·h/(ha·MJ·mm). También convierte la banda de carbono orgánico de OpenLandMap, almacenada como "×5 g/kg", a porcentaje (×0.5) antes de usarla en $f_{orgc}$.
+
+**Valores Típicos** (unidades SI, t·ha·h/(ha·MJ·mm)):
 
 | Tipo de Suelo | Factor K |
 |---------------|----------|
@@ -63,10 +89,6 @@ def calculate_r_factor(aoi, start_date, end_date):
 | Franco | 0.25 - 0.35 |
 | Franco arenoso | 0.10 - 0.20 |
 | Arena | 0.02 - 0.10 |
-
-**Implementación**:
-
-El Factor K se deriva de las clases de textura del suelo usando tablas de referencia basadas en encuestas de suelo USDA.
 
 ---
 
@@ -171,8 +193,12 @@ Donde:
 
 2. **Williams (1995)**: SWAT Theory Documentation.
 
-3. **Uddin et al. (2018)**: Assessment of land cover change and soil erosion in Nepal.
+3. **Sharpley & Williams (1990)**: EPIC - Erosion/Productivity Impact Calculator: 1. Model Documentation. USDA Technical Bulletin No. 1768.
 
-4. **De Jong (1994)**: Derivation of vegetative variables for soil erosion modeling.
+4. **Foster et al. (1981)**: Sediment composition for nonpoint source pollution analyses. Transactions of the ASAE, 24(5), 1444-1448.
 
-5. **Chuenchum et al. (2019)**: Estimation of soil erosion and sediment yield in the Lancang–Mekong river.
+5. **Uddin et al. (2018)**: Assessment of land cover change and soil erosion in Nepal.
+
+6. **De Jong (1994)**: Derivation of vegetative variables for soil erosion modeling.
+
+7. **Chuenchum et al. (2019)**: Estimation of soil erosion and sediment yield in the Lancang–Mekong river.

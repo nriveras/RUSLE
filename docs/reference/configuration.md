@@ -84,8 +84,8 @@ Validation ranges for RUSLE factors:
 
 | Parameter | Min | Max | Unit |
 |-----------|-----|-----|------|
-| R-factor | 0 | 20,000 | MJ·mm/ha/h/year |
-| K-factor | 0 | 1 | t·ha·h/ha/MJ/mm |
+| R-factor | 0 | 20,000 | MJ·mm/(ha·h·year) |
+| K-factor | 0 | 1 | t·ha·h/(ha·MJ·mm) |
 | LS-factor | 0 | 100 | dimensionless |
 | C-factor | 0 | 1 | dimensionless |
 | P-factor | 0 | 1 | dimensionless |

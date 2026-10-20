@@ -8,7 +8,7 @@ $$
 A = R \times K \times L \times S \times C \times P
 $$
 
-Where **A** is the average annual soil loss in tonnes per hectare per year (t/ha/year).
+Where **A** is the average annual soil loss in metric tonnes per hectare per year (t/ha/year, where t = Mg = 1,000 kg).
 
 ## Factor Descriptions
 
@@ -50,11 +50,37 @@ def calculate_r_factor(aoi, start_date, end_date):
 
 ### K-Factor: Soil Erodibility
 
-**What it measures**: The inherent susceptibility of soil to erosion based on texture, organic matter, structure, and permeability.
+**What it measures**: The inherent susceptibility of soil to erosion based on texture and organic matter content.
 
-**Data Source**: [OpenLandMap Soil Texture](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_TEXTURE-CLASS_USDA-TT_M_v02) datasets.
+**Data Source**: [OpenLandMap organic carbon](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_ORGANIC-CARBON_USDA-6A1C_M_v02), [clay](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_CLAY-WFRACTION_USDA-3A1A1A_M_v02), and [sand](https://developers.google.com/earth-engine/datasets/catalog/OpenLandMap_SOL_SOL_SAND-WFRACTION_USDA-3A1A1A_M_v02) content; silt is the remainder (100 - clay - sand).
 
-**Typical Values**:
+**Calculation Method** (Sharpley & Williams, 1990; as used in Williams, 1995's EPIC model):
+
+$$
+K_{USLE} = f_{csand} \cdot f_{cl\text{-}si} \cdot f_{orgc} \cdot f_{hisand}
+$$
+
+$$
+f_{csand} = 0.2 + 0.3 \cdot e^{-0.0256 \cdot m_s \cdot (1 - m_{silt}/100)}
+$$
+
+$$
+f_{cl\text{-}si} = \left(\frac{m_{silt}}{m_c + m_{silt}}\right)^{0.3}
+$$
+
+$$
+f_{orgc} = 1 - \frac{0.25 \cdot orgC}{orgC + e^{3.72 - 2.95 \cdot orgC}}
+$$
+
+$$
+f_{hisand} = 1 - \frac{0.7 \cdot (1 - m_s/100)}{(1 - m_s/100) + e^{-5.51 + 22.9 \cdot (1 - m_s/100)}}
+$$
+
+Where $m_s$, $m_{silt}$, $m_c$ are the percent sand, silt, and clay content, and $orgC$ is percent organic carbon.
+
+$K_{USLE}$ comes out in US customary units (short ton·ac·h/(100 ft·short ton·ac·in)). The implementation multiplies it by **0.1317** (Foster et al., 1981) to convert to the SI unit used throughout this project, t·ha·h/(ha·MJ·mm). It also converts the OpenLandMap organic-carbon band, stored as "×5 g/kg", to percent (×0.5) before it goes into $f_{orgc}$.
+
+**Typical Values** (SI units, t·ha·h/(ha·MJ·mm)):
 
 | Soil Type | K-Factor |
 |-----------|----------|
@@ -63,10 +89,6 @@ def calculate_r_factor(aoi, start_date, end_date):
 | Loam | 0.25 - 0.35 |
 | Sandy loam | 0.10 - 0.20 |
 | Sand | 0.02 - 0.10 |
-
-**Implementation**:
-
-The K-factor is derived from soil texture classes using lookup tables based on USDA soil surveys.
 
 ---
 
@@ -171,8 +193,12 @@ Where:
 
 2. **Williams (1995)**: SWAT Theory Documentation.
 
-3. **Uddin et al. (2018)**: Assessment of land cover change and soil erosion in Nepal.
+3. **Sharpley & Williams (1990)**: EPIC - Erosion/Productivity Impact Calculator: 1. Model Documentation. USDA Technical Bulletin No. 1768.
 
-4. **De Jong (1994)**: Derivation of vegetative variables for soil erosion modeling.
+4. **Foster et al. (1981)**: Sediment composition for nonpoint source pollution analyses. Transactions of the ASAE, 24(5), 1444-1448.
 
-5. **Chuenchum et al. (2019)**: Estimation of soil erosion and sediment yield in the Lancang–Mekong river.
+5. **Uddin et al. (2018)**: Assessment of land cover change and soil erosion in Nepal.
+
+6. **De Jong (1994)**: Derivation of vegetative variables for soil erosion modeling.
+
+7. **Chuenchum et al. (2019)**: Estimation of soil erosion and sediment yield in the Lancang–Mekong river.
