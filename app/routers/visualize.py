@@ -74,7 +74,7 @@ async def get_map_config(job_id: str) -> MapConfig:
                 'name': 'K Factor (Soil Erodibility)',
                 'type': 'tile',
                 'url': _get_tile_url(cached['result'].k_factor, {
-                    'min': 0.3, 'max': 0.5,
+                    'min': 0, 'max': 0.07,
                     'palette': viridis
                 }),
                 'visible': False,
@@ -199,7 +199,7 @@ async def get_folium_map(
         
         add_ee_layer(
             cached['result'].k_factor,
-            {'min': 0.3, 'max': 0.5, 'palette': viridis},
+            {'min': 0, 'max': 0.07, 'palette': viridis},
             'K Factor (Soil Erodibility)',
             show=False
         )

@@ -6,6 +6,8 @@ with Google Earth Engine. Based on code by Lucas Rivero Iribarne.
 
 References:
     - Williams (1995): SWAT Theory Documentation
+    - Sharpley & Williams (1990): EPIC - Erosion/Productivity Impact Calculator
+    - Foster et al. (1981): Conversion of USLE soil erodibility factor to SI
     - Uddin et al. (2018): Assessment of land cover change and soil erosion
     - De Jong (1994): Derivation of vegetative variables for soil erosion modeling
     - Chuenchum et al. (2019): Estimation of soil erosion and sediment yield
@@ -197,9 +199,15 @@ def calculate_k_factor(
     c_org: ee.Image
 ) -> ee.Image:
     """
-    Calculate soil erodibility factor (K) using Williams (1995) method.
+    Calculate soil erodibility factor (K) using the EPIC method
+    (Sharpley & Williams, 1990; as used in Williams, 1995).
 
-    K = f_csand * f_cl_si * f_orgc * f_hisand
+    K_USLE = f_csand * f_cl_si * f_orgc * f_hisand
+
+    K_USLE comes out in US customary units (short ton*ac*h /
+    (100 ft*short ton*ac*in)). The result is multiplied by 0.1317
+    (Foster et al., 1981) to convert it to the SI unit used
+    throughout this project: t*ha*h/(ha*MJ*mm).
 
     Args:
         sand: Sand content percentage image.
@@ -208,7 +216,7 @@ def calculate_k_factor(
         c_org: Organic carbon percentage image.
 
     Returns:
-        ee.Image: K factor image.
+        ee.Image: K factor image, in SI units (t*ha*h/(ha*MJ*mm)).
     """
     # f_csand: Factor for coarse sand content
     # f_csand = 0.2 + 0.3 * exp(-0.0256 * SAN * (1 - SIL/100))
@@ -268,12 +276,13 @@ def calculate_k_factor(
         .rename('f_hisand')
     )
 
-    # Combine all factors
+    # Combine all factors and convert US customary -> SI
     k_factor = (
         f_csand
         .multiply(f_cl_si)
         .multiply(f_orgc)
         .multiply(f_hisand)
+        .multiply(0.1317)  # US customary -> SI (t*ha*h/(ha*MJ*mm))
         .rename('K_factor')
     )
 

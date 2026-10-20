@@ -175,9 +175,15 @@ class RUSLECalculator:
     
     def _calculate_k_factor(self, aoi: ee.Geometry) -> ee.Image:
         """
-        Calculate soil erodibility factor (K) using Williams (1995) method.
-        
-        K = f_csand * f_cl_si * f_orgc * f_hisand
+        Calculate soil erodibility factor (K) using the EPIC method
+        (Sharpley & Williams, 1990; as used in Williams, 1995):
+
+        K_USLE = f_csand * f_cl_si * f_orgc * f_hisand
+
+        K_USLE comes out in US customary units (short ton*ac*h /
+        (100 ft*short ton*ac*in)). Multiplying by 0.1317 (Foster et al.,
+        1981) converts it to the SI unit used throughout this app:
+        t*ha*h/(ha*MJ*mm).
         """
         organic_carbon, clay, sand, silt = gee_service.load_soil_data(aoi)
 
@@ -228,8 +234,9 @@ class RUSLECalculator:
         
         k_factor = (
             f_csand.multiply(f_cl_si).multiply(f_orgc).multiply(f_hisand)
+            .multiply(0.1317)  # US customary -> SI (t*ha*h/(ha*MJ*mm))
             .rename('K_factor')
-            .unmask(0.04)  # Fill gaps with average K-factor value
+            .unmask(0.04)  # Fill gaps with average K-factor value (SI)
             .clip(aoi)
         )
         
