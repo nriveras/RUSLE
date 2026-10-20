@@ -112,10 +112,13 @@ def load_soil_data(
             - sand: Sand content image
             - silt: Silt content image (calculated)
     """
-    # Surface layer (b0) data
+    # Surface layer (b0) data.
+    # c_org band is stored as "x5 g/kg" (per the GEE catalog), so undo the
+    # x5 scale and convert g/kg -> % by multiplying by 0.5 overall.
     c_org = (
         ee.Image('OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02')
         .select('b0')
+        .multiply(0.5)  # x5 g/kg -> %
         .clip(aoi)
     )
     clay = (
