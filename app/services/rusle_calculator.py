@@ -133,8 +133,8 @@ class RUSLECalculator:
         p_factor = inputs.custom_p_factor or self._calculate_p_factor(aoi)
         
         # Calculate soil loss: A = R * K * L * S * C * P
-        pixel_area_ha = (inputs.pixel_size ** 2) / 10000  # Convert m² to ha
-        
+        # A is already in t/ha/yr once R and K are in SI units - no pixel-area
+        # multiply here (that would turn it into t/yr per pixel).
         soil_loss = (
             r_factor
             .multiply(k_factor)
@@ -142,7 +142,6 @@ class RUSLECalculator:
             .multiply(s_factor)
             .multiply(c_factor)
             .multiply(p_factor)
-            .multiply(pixel_area_ha)
             .rename('soil_loss')
             .unmask(0)  # Fill any remaining gaps with 0 soil loss
             .clip(aoi)  # Clip final result to AOI

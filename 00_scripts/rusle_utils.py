@@ -506,13 +506,16 @@ def calculate_rusle(
     l_factor: ee.Image,
     s_factor: ee.Image,
     c_factor: ee.Image,
-    p_factor: ee.Image,
-    pixel_area_ha: float = 0.09
+    p_factor: ee.Image
 ) -> ee.Image:
     """
     Calculate soil loss using RUSLE equation.
 
     A = R * K * L * S * C * P
+
+    A comes out in t/ha/yr directly once R and K are in SI units -
+    do not multiply by pixel area here, that would turn it into
+    t/yr per pixel instead of t/ha/yr.
 
     Args:
         r_factor: Rainfall erosivity factor.
@@ -521,7 +524,6 @@ def calculate_rusle(
         s_factor: Slope steepness factor.
         c_factor: Vegetation cover factor.
         p_factor: Erosion control practices factor.
-        pixel_area_ha: Pixel area in hectares (default 0.09 for 30x30m).
 
     Returns:
         ee.Image: Soil loss in ton/ha/year.
@@ -533,7 +535,6 @@ def calculate_rusle(
         .multiply(s_factor)
         .multiply(c_factor)
         .multiply(p_factor)
-        .multiply(pixel_area_ha)
         .rename('soil_loss')
     )
 
