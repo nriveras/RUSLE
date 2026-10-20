@@ -211,13 +211,15 @@ def calculate_k_factor(
         ee.Image: K factor image.
     """
     # f_csand: Factor for coarse sand content
+    # f_csand = 0.2 + 0.3 * exp(-0.0256 * SAN * (1 - SIL/100))
     f_csand = (
         ee.Image(0.2)
         .add(
             ee.Image(0.3)
             .multiply(
-                ee.Image(-0.256)
-                .multiply(silt.divide(100).subtract(1))
+                ee.Image(-0.0256)
+                .multiply(sand)
+                .multiply(ee.Image(1).subtract(silt.divide(100)))
                 .exp()
             )
         )
