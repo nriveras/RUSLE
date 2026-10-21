@@ -227,7 +227,7 @@ Where:
 
 | Factor | Name | Description | Unit |
 |--------|------|-------------|------|
-| **A** | Soil Loss | Average annual soil loss | ton/ha/year |
+| **A** | Soil Loss | Average annual soil loss | t/ha/year |
 | **R** | Rainfall Erosivity | Effect of rainfall intensity | MJ·mm/(ha·h·yr) |
 | **K** | Soil Erodibility | Susceptibility of soil to erosion | t·ha·h/(ha·MJ·mm) |
 | **L** | Slope Length | Effect of slope length | dimensionless |
@@ -235,9 +235,11 @@ Where:
 | **C** | Cover Management | Effect of vegetation cover | dimensionless |
 | **P** | Support Practices | Effect of conservation practices | dimensionless |
 
+> **t** = metric tonne (1 t = 1 Mg = 1,000 kg) throughout this project. K is reported directly in SI units.
+
 ### Factor Calculations
 
-- **K Factor** (Williams, 1995): Based on sand, silt, clay, and organic carbon content
+- **K Factor** (Sharpley & Williams, 1990; as used in Williams, 1995): K = f_csand × f_cl-si × f_orgc × f_hisand, based on sand, silt, clay, and organic carbon content. The result is in US customary units and is multiplied by 0.1317 (Foster et al., 1981) to convert it to SI (t·ha·h/(ha·MJ·mm))
 - **R Factor**: R = 0.0483 × P^1.610 where P is annual precipitation
 - **L Factor**: L = (λ / 22.13)^m where m varies with slope
 - **S Factor**: S = (0.43 + 0.3S + 0.043S²) / 6.613
@@ -248,7 +250,7 @@ Where:
 
 ## Soil Loss Classification
 
-| Range (ton/ha/yr) | Class | Color |
+| Range (t/ha/yr) | Class | Color |
 |-------------------|-------|-------|
 | 0 - 5 | Very Low | � Dark Purple (#440154) |
 | 5 - 10 | Low | 🟣 Purple (#482878) |
@@ -266,11 +268,15 @@ Where:
 
 2. Williams, J.R. (1995). The EPIC Model. In V.P. Singh (Ed.), *Computer Models of Watershed Hydrology*. Water Resources Publications.
 
-3. De Jong, S.M. (1994). Derivation of vegetative variables from a Landsat TM image for modelling soil erosion. *Earth Surface Processes and Landforms*, 19(2), 165-178.
+3. Sharpley, A.N., & Williams, J.R. (Eds.). (1990). *EPIC - Erosion/Productivity Impact Calculator: 1. Model Documentation*. USDA Technical Bulletin No. 1768.
 
-4. Chuenchum, P., Xu, M., & Tang, W. (2019). Estimation of soil erosion and sediment yield in the Lancang–Mekong river using the modified revised universal soil loss equation and GIS techniques. *Water*, 12(1), 135.
+4. Foster, G.R., Young, R.A., & Neibling, W.H. (1981). Sediment composition for nonpoint source pollution analyses. *Transactions of the ASAE*, 24(5), 1444-1448.
 
-5. Uddin, K., Abdul Matin, M., & Maharjan, S. (2018). Assessment of land cover change and its impact on changes in soil erosion risk in Nepal. *Sustainability*, 10(12), 4715.
+5. De Jong, S.M. (1994). Derivation of vegetative variables from a Landsat TM image for modelling soil erosion. *Earth Surface Processes and Landforms*, 19(2), 165-178.
+
+6. Chuenchum, P., Xu, M., & Tang, W. (2019). Estimation of soil erosion and sediment yield in the Lancang–Mekong river using the modified revised universal soil loss equation and GIS techniques. *Water*, 12(1), 135.
+
+7. Uddin, K., Abdul Matin, M., & Maharjan, S. (2018). Assessment of land cover change and its impact on changes in soil erosion risk in Nepal. *Sustainability*, 10(12), 4715.
 
 ---
 

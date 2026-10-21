@@ -51,8 +51,8 @@ Where:
 | Factor | Description | Unit |
 |--------|-------------|------|
 | **A** | Annual soil loss | t/ha/year |
-| **R** | Rainfall erosivity factor | MJ·mm/ha/h/year |
-| **K** | Soil erodibility factor | t·ha·h/ha/MJ/mm |
+| **R** | Rainfall erosivity factor | MJ·mm/(ha·h·year) |
+| **K** | Soil erodibility factor | t·ha·h/(ha·MJ·mm) |
 | **L** | Slope length factor | dimensionless |
 | **S** | Slope steepness factor | dimensionless |
 | **C** | Cover management factor | dimensionless |

@@ -228,7 +228,7 @@ async def process_rusle(request: ProcessRequest):
                 unit='t·ha·h/(ha·MJ·mm)',
                 tile_url=calculator.get_tile_url(
                     result.k_factor,
-                    {'min': 0.3, 'max': 0.5, 'palette': factor_vis['palette']},
+                    {'min': 0, 'max': 0.07, 'palette': factor_vis['palette']},
                     scale=adjusted_scale
                 )
             ),

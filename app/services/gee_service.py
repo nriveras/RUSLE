@@ -90,10 +90,13 @@ def load_soil_data(aoi: ee.Geometry) -> tuple:
     Returns:
         Tuple of (organic_carbon, clay, sand, silt) images
     """
-    # Load with unmask to fill gaps (common in coastal/water areas)
+    # Load with unmask to fill gaps (common in coastal/water areas).
+    # Band b0 is stored as "x5 g/kg" (per the GEE catalog), so divide by
+    # 10 after undoing the x5 scale (i.e. multiply by 0.5) to get %.
     organic_carbon = (
         ee.Image("OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02")
         .select('b0')
+        .multiply(0.5)  # x5 g/kg -> %
         .unmask(1.5)  # Default organic carbon %
         .clip(aoi)
     )

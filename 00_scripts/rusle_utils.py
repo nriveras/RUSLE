@@ -6,6 +6,8 @@ with Google Earth Engine. Based on code by Lucas Rivero Iribarne.
 
 References:
     - Williams (1995): SWAT Theory Documentation
+    - Sharpley & Williams (1990): EPIC - Erosion/Productivity Impact Calculator
+    - Foster et al. (1981): Conversion of USLE soil erodibility factor to SI
     - Uddin et al. (2018): Assessment of land cover change and soil erosion
     - De Jong (1994): Derivation of vegetative variables for soil erosion modeling
     - Chuenchum et al. (2019): Estimation of soil erosion and sediment yield
@@ -110,10 +112,13 @@ def load_soil_data(
             - sand: Sand content image
             - silt: Silt content image (calculated)
     """
-    # Surface layer (b0) data
+    # Surface layer (b0) data.
+    # c_org band is stored as "x5 g/kg" (per the GEE catalog), so undo the
+    # x5 scale and convert g/kg -> % by multiplying by 0.5 overall.
     c_org = (
         ee.Image('OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02')
         .select('b0')
+        .multiply(0.5)  # x5 g/kg -> %
         .clip(aoi)
     )
     clay = (
@@ -197,9 +202,15 @@ def calculate_k_factor(
     c_org: ee.Image
 ) -> ee.Image:
     """
-    Calculate soil erodibility factor (K) using Williams (1995) method.
+    Calculate soil erodibility factor (K) using the EPIC method
+    (Sharpley & Williams, 1990; as used in Williams, 1995).
 
-    K = f_csand * f_cl_si * f_orgc * f_hisand
+    K_USLE = f_csand * f_cl_si * f_orgc * f_hisand
+
+    K_USLE comes out in US customary units (short ton*ac*h /
+    (100 ft*short ton*ac*in)). The result is multiplied by 0.1317
+    (Foster et al., 1981) to convert it to the SI unit used
+    throughout this project: t*ha*h/(ha*MJ*mm).
 
     Args:
         sand: Sand content percentage image.
@@ -208,16 +219,18 @@ def calculate_k_factor(
         c_org: Organic carbon percentage image.
 
     Returns:
-        ee.Image: K factor image.
+        ee.Image: K factor image, in SI units (t*ha*h/(ha*MJ*mm)).
     """
     # f_csand: Factor for coarse sand content
+    # f_csand = 0.2 + 0.3 * exp(-0.0256 * SAN * (1 - SIL/100))
     f_csand = (
         ee.Image(0.2)
         .add(
             ee.Image(0.3)
             .multiply(
-                ee.Image(-0.256)
-                .multiply(silt.divide(100).subtract(1))
+                ee.Image(-0.0256)
+                .multiply(sand)
+                .multiply(ee.Image(1).subtract(silt.divide(100)))
                 .exp()
             )
         )
@@ -266,12 +279,13 @@ def calculate_k_factor(
         .rename('f_hisand')
     )
 
-    # Combine all factors
+    # Combine all factors and convert US customary -> SI
     k_factor = (
         f_csand
         .multiply(f_cl_si)
         .multiply(f_orgc)
         .multiply(f_hisand)
+        .multiply(0.1317)  # US customary -> SI (t*ha*h/(ha*MJ*mm))
         .rename('K_factor')
     )
 
@@ -492,13 +506,16 @@ def calculate_rusle(
     l_factor: ee.Image,
     s_factor: ee.Image,
     c_factor: ee.Image,
-    p_factor: ee.Image,
-    pixel_area_ha: float = 0.09
+    p_factor: ee.Image
 ) -> ee.Image:
     """
     Calculate soil loss using RUSLE equation.
 
     A = R * K * L * S * C * P
+
+    A comes out in t/ha/yr directly once R and K are in SI units -
+    do not multiply by pixel area here, that would turn it into
+    t/yr per pixel instead of t/ha/yr.
 
     Args:
         r_factor: Rainfall erosivity factor.
@@ -507,10 +524,9 @@ def calculate_rusle(
         s_factor: Slope steepness factor.
         c_factor: Vegetation cover factor.
         p_factor: Erosion control practices factor.
-        pixel_area_ha: Pixel area in hectares (default 0.09 for 30x30m).
 
     Returns:
-        ee.Image: Soil loss in ton/ha/year.
+        ee.Image: Soil loss in t/ha/year.
     """
     soil_loss = (
         r_factor
@@ -519,7 +535,6 @@ def calculate_rusle(
         .multiply(s_factor)
         .multiply(c_factor)
         .multiply(p_factor)
-        .multiply(pixel_area_ha)
         .rename('soil_loss')
     )
 

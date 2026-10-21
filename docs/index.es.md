@@ -51,8 +51,8 @@ Donde:
 | Factor | Descripción | Unidad |
 |--------|-------------|--------|
 | **A** | Pérdida anual de suelo | t/ha/año |
-| **R** | Factor de erosividad de la lluvia | MJ·mm/ha/h/año |
-| **K** | Factor de erodibilidad del suelo | t·ha·h/ha/MJ/mm |
+| **R** | Factor de erosividad de la lluvia | MJ·mm/(ha·h·año) |
+| **K** | Factor de erodibilidad del suelo | t·ha·h/(ha·MJ·mm) |
 | **L** | Factor de longitud de pendiente | adimensional |
 | **S** | Factor de inclinación de pendiente | adimensional |
 | **C** | Factor de gestión de cobertura | adimensional |

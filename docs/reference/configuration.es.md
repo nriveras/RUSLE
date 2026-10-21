@@ -84,8 +84,8 @@ Rangos de validación para los factores RUSLE:
 
 | Parámetro | Mín | Máx | Unidad |
 |-----------|-----|-----|--------|
-| Factor R | 0 | 20,000 | MJ·mm/ha/h/año |
-| Factor K | 0 | 1 | t·ha·h/ha/MJ/mm |
+| Factor R | 0 | 20,000 | MJ·mm/(ha·h·año) |
+| Factor K | 0 | 1 | t·ha·h/(ha·MJ·mm) |
 | Factor LS | 0 | 100 | adimensional |
 | Factor C | 0 | 1 | adimensional |
 | Factor P | 0 | 1 | adimensional |
